@@ -1,10 +1,17 @@
 import * as vscode from 'vscode';
+import os from 'os';
 import ollama from 'ollama';
-import { getWebViewHtmlContent } from './utils';
+import { executableIsAvailable, getWebViewHtmlContent } from './utils';
 
 
 export function activate(context: vscode.ExtensionContext) {
+
+    globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
+	executableIsAvailable("ollamax");
+
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
+		executableIsAvailable("ollamax");
+
 		let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
 		if(!defaultModel){
 			defaultModel = 'qwen2.5-coder';
