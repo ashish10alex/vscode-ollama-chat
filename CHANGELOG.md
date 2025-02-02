@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.5](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.4...v0.0.5) (2025-02-02)
+
+
+### Features
+
+* allow user to select model from the ui  ([#1](https://github.com/ashish10alex/vscode-ollama-chat/issues/1)) ([dc67bb0](https://github.com/ashish10alex/vscode-ollama-chat/commit/dc67bb0a3b7b72f4a0a85c285ba574049a07f268))
+
+
+### Bug Fixes
+
+* href text to ollama website ([939cfee](https://github.com/ashish10alex/vscode-ollama-chat/commit/939cfee976e3176df821b475328d941e3fa3ef2c))
+
 ### [0.0.4](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.3...v0.0.4) (2025-02-02)
 
 
