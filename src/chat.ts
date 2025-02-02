@@ -45,22 +45,22 @@ return /*html*/ `
       <!-- Error message for Ollama CLI not installed -->
     <div id="ollamaError" class="hidden bg-red-500 text-white p-4 rounded-md mb-4">
       <p class="font-bold">Error: Ollama CLI not installed</p>
-      <p>Please install Ollama CLI to use this application. Visit <a href="https://ollama.com/download" class="underline" target="_blank" rel="noopener noreferrer">ollama.ai</a> for installation instructions.</p>
+      <p>Please install Ollama CLI to use this application. Visit <a href="https://ollama.com/download" class="underline" target="_blank" rel="noopener noreferrer">ollama.com</a> for installation instructions.</p>
     </div>
 
     <!-- Input Area -->
     <div class="border-t border-[#252526] p-4 bg-[#1e1e1e]">
         <div class="flex gap-2">
-            <textarea 
+            <textarea
                 id="questionInput"
-                class="w-full p-2 bg-[#3c3c3c] text-[#cccccc] rounded border border-[#3c3c3c] 
-                    focus:outline-none focus:border-[#0e639c] focus:ring-2 focus:ring-[#0e639c] 
+                class="w-full p-2 bg-[#3c3c3c] text-[#cccccc] rounded border border-[#3c3c3c]
+                    focus:outline-none focus:border-[#0e639c] focus:ring-2 focus:ring-[#0e639c]
                     focus:ring-offset-2 focus:ring-offset-[#1e1e1e] placeholder-[#858585]
                     transition-all duration-100"
                 placeholder="Type your question here..."
                 rows="2"
             ></textarea>
-            <button 
+            <button
                 id="submitBtn"
                 class="h-fit px-4 py-2 bg-[#333333] text-[#cccccc] rounded hover:bg-[#404040] focus:outline-none focus:ring-2 focus:ring-[#4d4d4d] border border-[#454545]"
             >
