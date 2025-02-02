@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.3](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.2...v0.0.3) (2025-02-02)
+
+
+### Features
+
+* give user error if ollama cli is not installed ([cff117b](https://github.com/ashish10alex/vscode-ollama-chat/commit/cff117bdae9c7e569f8845e9e5bb079201a9e339))
+* show user error if ollama cli not installed ([2ecbb2b](https://github.com/ashish10alex/vscode-ollama-chat/commit/2ecbb2b67e2ed3ac7d0e7c3e01d08aebf5ca3e6c))
+
 ### [0.0.2](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.1...v0.0.2) (2025-02-02)
 
 
