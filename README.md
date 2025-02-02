@@ -2,7 +2,7 @@
 
 An **experimental** VS Code extension that allows you to use self hosted models offline that can be downloaded from [ollama](https://ollama.com/download).
 
-<img src="./.docs/ollama-chat-demo.png" alt="ollam-chat-demo" width="80%">
+<img src="./.docs/ollama-chat.gif" alt="ollam-chat-demo" width="80%">
 
 ## How to use ?
 
@@ -20,8 +20,7 @@ An **experimental** VS Code extension that allows you to use self hosted models 
 * [ ] feat: Show error if user does not have ollama started
 * [ ] feat: Show error if user does not have a model. Show them example command to install model
 * [ ] fix: when asking the second question output is overwritten on the last output thread
-* [ ] feat: List available models in web view and make selection possible from the web view
 * [ ] feat: Retain context when conversating
-* [ ] Processes pdfs ?
-* [ ] Audio search
-* [ ] Do we need to use a build system like web pack ?
+* [ ] feat: Processes pdfs ?
+* [ ] feat: Audio search
+* [ ] build: Do we need to use a build system like web pack ?

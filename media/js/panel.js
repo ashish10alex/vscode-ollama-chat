@@ -10,6 +10,7 @@ window.onload = function() {
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    hljs.configure({ignoreUnescapedHTML: true});
     hljs.addPlugin(new CopyButtonPlugin({ autohide: false }));
 });
 
