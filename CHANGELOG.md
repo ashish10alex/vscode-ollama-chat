@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.2](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.1...v0.0.2) (2025-02-02)
+
+
+### Bug Fixes
+
+* docs link ([d999a74](https://github.com/ashish10alex/vscode-ollama-chat/commit/d999a74c0a3e99ab750f1390c9cb63c9b7cccfbe))
+* inline autofocus not allowed ([c1cc8e5](https://github.com/ashish10alex/vscode-ollama-chat/commit/c1cc8e5ed39114adc51415b767e50688f2c05999))
+* js file was not available ([32426ec](https://github.com/ashish10alex/vscode-ollama-chat/commit/32426ec7396490126d858ab7b747d9a507291b55))
+
 ### 0.0.1 (2025-02-02)
 
 
