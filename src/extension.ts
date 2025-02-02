@@ -4,7 +4,6 @@ import ollama from 'ollama';
 import { executableIsAvailable } from './utils';
 import { getWebViewHtmlContent } from './chat';
 
-
 export function activate(context: vscode.ExtensionContext) {
 
 	const ollamaBinaryName = "ollama";
@@ -12,7 +11,7 @@ export function activate(context: vscode.ExtensionContext) {
 	executableIsAvailable(ollamaBinaryName);
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
-		executableIsAvailable(ollamaBinaryName);
+		const ollamaInstalled = executableIsAvailable(ollamaBinaryName);
 
 		let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
 		if(!defaultModel){
@@ -31,6 +30,9 @@ export function activate(context: vscode.ExtensionContext) {
 				},
 		);
 		panel.webview.html = getWebViewHtmlContent(context, panel.webview);
+		if(ollamaInstalled === false){
+			panel.webview.postMessage({command: "ollamaInstallErorr", text: "ollama not installed"});
+		};
 
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";

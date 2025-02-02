@@ -42,6 +42,12 @@ return /*html*/ `
         </div>
     </div>
 
+      <!-- Error message for Ollama CLI not installed -->
+    <div id="ollamaError" class="hidden bg-red-500 text-white p-4 rounded-md mb-4">
+      <p class="font-bold">Error: Ollama CLI not installed</p>
+      <p>Please install Ollama CLI to use this application. Visit <a href="https://ollama.com/download" class="underline" target="_blank" rel="noopener noreferrer">ollama.ai</a> for installation instructions.</p>
+    </div>
+
     <!-- Input Area -->
     <div class="border-t border-[#252526] p-4 bg-[#1e1e1e]">
         <div class="flex gap-2">
