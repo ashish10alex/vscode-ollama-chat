@@ -62,7 +62,7 @@ return `
                     transition-all duration-100"
                 placeholder="Type your question here..."
                 autofocus
-                rows="3"
+                rows="2"
             ></textarea>
             <button 
                 id="submitBtn"

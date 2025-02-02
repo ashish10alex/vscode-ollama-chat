@@ -30,7 +30,7 @@ function addMessage(content, isUser = true) {
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`;
-    messageDiv.innerHTML = `<div class="max-w-3xl w-full p-4 rounded-lg ${
+    messageDiv.innerHTML = `<div class="max-w-7xl w-full p-4 rounded-lg ${
         isUser 
             ? 'bg-[#0066AD] text-[#ffffff] mx-auto'
             : 'bg-[#252526] text-[#d4d4d4] border border-[#404040] mx-auto'
