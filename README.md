@@ -12,7 +12,9 @@ How to use ?
     ollama run qwen2.5-coder
     ```
 
-2. Open extension in debugger mode and run command `Ollama Chat` in command panel
+2. Open  terminal and run `ollama serve` or manually open Ollama app
+
+3. Open extension in debugger mode and run command `Ollama Chat` in command panel
 
 ## TODO
 
