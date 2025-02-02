@@ -15,8 +15,11 @@ export function activate(context: vscode.ExtensionContext) {
 				vscode.ViewColumn.One,
 				{
 					enableScripts: true,
-					retainContextWhenHidden: true
-				}
+					retainContextWhenHidden: true,
+                    localResourceRoots: [
+                        vscode.Uri.joinPath(context.extensionUri, "media", "js")
+                    ],
+				},
 		);
 		panel.webview.html = getWebViewHtmlContent(context, panel.webview);
 

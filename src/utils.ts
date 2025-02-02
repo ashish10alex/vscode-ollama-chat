@@ -12,7 +12,7 @@ export function getNonce() {
 
 export function getWebViewHtmlContent(context:ExtensionContext, webview: Webview ) {
 
-const scriptUri = webview.asWebviewUri(Uri.joinPath(context.extensionUri, "src", "panel.js"));
+const scriptUri = webview.asWebviewUri(Uri.joinPath(context.extensionUri, "media", "js", "panel.js"));
 const nonce = getNonce();
 
 /*html*/
