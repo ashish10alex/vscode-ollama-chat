@@ -100,7 +100,7 @@ window.addEventListener('message', event => {
     const { command, text } = event.data;
     if (command === "chatResponse") {
         updateLastAssistantMessage(text);
-    }else if (command = "ollamaInstallErorr"){
+    }else if (command === "ollamaInstallErorr"){
         document.getElementById('ollamaError').classList.remove('hidden');
     }
 });
