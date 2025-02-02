@@ -3,7 +3,7 @@
   "displayName": "Ollama Chat",
   "description": "Experimental extension to chat with models available to download from Ollama",
   "publisher": "ashishalex",
-  "icon": "docs/ollama-chat-logo.png",
+  "icon": ".docs/ollama-chat-logo.png",
   "repository": {
     "type": "git",
     "url": "https://github.com/ashish10alex/vscode-ollama-chat.git"
