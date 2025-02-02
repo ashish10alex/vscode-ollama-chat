@@ -1,16 +1,18 @@
 import * as vscode from 'vscode';
 import os from 'os';
 import ollama from 'ollama';
-import { executableIsAvailable, getWebViewHtmlContent } from './utils';
+import { executableIsAvailable } from './utils';
+import { getWebViewHtmlContent } from './chat';
 
 
 export function activate(context: vscode.ExtensionContext) {
 
+	const ollamaBinaryName = "ollama";
     globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
-	executableIsAvailable("ollamax");
+	executableIsAvailable(ollamaBinaryName);
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
-		executableIsAvailable("ollamax");
+		executableIsAvailable(ollamaBinaryName);
 
 		let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
 		if(!defaultModel){
