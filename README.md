@@ -1,6 +1,6 @@
 # Ollama Chat
 
-An **experimental** VS Code extension that allows you to use self hosted models downloaded from [ollama](https://ollama.com/download).
+An **experimental** VS Code extension that allows you to use self hosted models offline that can be downloaded from [ollama](https://ollama.com/download).
 
 <img src="./.docs/ollama-chat-demo.png" alt="ollam-chat-demo" width="80%">
 
