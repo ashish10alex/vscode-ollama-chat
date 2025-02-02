@@ -17,7 +17,7 @@ An **experimental** VS Code extension that allows you to use self hosted models 
 
 ## TODO
 
-* [ ] feat: Show error if user does not have ollama started
+* [ ] feat: Show error if user does not have ollama started either manually via opening the app or using `ollama serve`
 * [ ] feat: Show error if user does not have a model. Show them example command to install model
 * [ ] fix: when asking the second question output is overwritten on the last output thread
 * [ ] fix: can not scroll when the output is being rendered on VSCode webview. This might be due to the fact that html and its contents are being constantly rendered and forcing the focus to where the last content is drawn to ?
