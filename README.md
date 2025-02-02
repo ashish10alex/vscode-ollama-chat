@@ -2,6 +2,8 @@
 
 An experimental VS Code extension that allows you to use self hosted models downloaded from [ollama](https://ollama.com/download).
 
+<img src="./.docs/ollama-chat-demo.png" alt="ollam-chat-demo" width="80%">
+
 How to use ?
 
 1. Install [Ollama](https://ollama.com/download) and download a model
