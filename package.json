@@ -2,6 +2,8 @@
   "name": "ollama-chat",
   "displayName": "Ollama Chat",
   "description": "Experimental extension to chat with models available to download from Ollama",
+  "publisher": "ashishalex",
+  "icon": "docs/ollama-chat-logo.png",
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.96.0"
