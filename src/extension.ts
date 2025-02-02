@@ -8,17 +8,19 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const ollamaBinaryName = "ollama";
     globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
+
+	let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
+	if(!defaultModel){
+		defaultModel = 'qwen2.5-coder';
+	}
+	globalThis.defaultModel = defaultModel;
+
 	executableIsAvailable(ollamaBinaryName);
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
 		const ollamaInstalled = executableIsAvailable(ollamaBinaryName);
 		const availableModels = getAvaialableModels();
-		console.log(availableModels);
 
-		let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
-		if(!defaultModel){
-			defaultModel = 'qwen2.5-coder';
-		}
 		const panel = vscode.window.createWebviewPanel(
 				"Ollama chat",
 				"Ollama chat window",
@@ -36,6 +38,8 @@ export function activate(context: vscode.ExtensionContext) {
 			panel.webview.postMessage({command: "ollamaInstallErorr", text: "ollama not installed"});
 		};
 
+		panel.webview.postMessage({availableModels: availableModels});
+
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";
 			if(message.command === 'chat'){
@@ -43,14 +47,12 @@ export function activate(context: vscode.ExtensionContext) {
 				const response = await ollama.chat(
 					{
 						model: defaultModel,
-						// model: 'deepseek-r1:8b',
 						messages: [promt],
 						stream: true,
 					}
 				);
 				for await (const part of response) {
 					responseText += part.message.content;
-					// console.log(part.message.content);
 					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels});
 				}
 			}

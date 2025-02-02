@@ -47,8 +47,6 @@ return /*html*/ `
                         backdrop-blur-sm shadow-lg appearance-none transition-all duration-200
                         hover:border-[#5e5e5e]"
                 >
-                    <option value="qwen2.5-coder" class="bg-[#2d2d2d]">qwen2.5-coder</option>
-                    <option value="deepseek-r1:7b" class="bg-[#2d2d2d]">deepseek-r1:7b</option>
                 </select>
                 <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
                     <svg class="h-5 w-5 text-[#858585]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
