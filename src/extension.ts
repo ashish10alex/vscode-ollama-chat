@@ -5,6 +5,10 @@ import { getWebViewHtmlContent } from './utils';
 
 export function activate(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
+		let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
+		if(!defaultModel){
+			defaultModel = 'qwen2.5-coder';
+		}
 		const panel = vscode.window.createWebviewPanel(
 				"Ollama chat",
 				"Ollama chat window",
@@ -22,7 +26,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const promt = { role: 'user', content: message.question};
 				const response = await ollama.chat(
 					{
-						model: 'qwen2.5-coder',
+						model: defaultModel,
 						// model: 'deepseek-r1:8b',
 						messages: [promt],
 						stream: true,

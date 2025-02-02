@@ -18,7 +18,6 @@ How to use ?
 
 ## TODO
 
-* [ ] Switch to a different model ?
 * [ ] retain context when conversating
 * [ ] Audio search
 * [ ] Processes pdfs ?

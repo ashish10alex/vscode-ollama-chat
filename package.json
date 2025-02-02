@@ -17,7 +17,17 @@
         "command": "ollama-chat.ollamaChat",
         "title": "Ollama Chat"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Ollama Chat",
+      "properties": {
+          "ollama-chat.defaultModel": {
+              "type": "string",
+              "default": "qwen2.5-coder",
+              "markdownDescription": "Model to run query against. Run `ollama list` on terminal to see NAME of the available models"
+          }
+        }
+    }
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
