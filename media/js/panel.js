@@ -2,12 +2,15 @@ const vscode = acquireVsCodeApi();
 const chatContainer = document.getElementById('chatContainer');
 const questionInput = document.getElementById('questionInput');
 const submitBtn = document.getElementById('submitBtn');
+const modelSelector = document.getElementById('modelSelector');
+
 
 window.onload = function() {
     questionInput.focus();
 };
 
 document.addEventListener('DOMContentLoaded', () => {
+    hljs.configure({ignoreUnescapedHTML: true});
     hljs.addPlugin(new CopyButtonPlugin({ autohide: false }));
 });
 
@@ -21,6 +24,17 @@ const md = markdownit({
         return `<pre class="bg-[#252526] rounded p-4 my-2 border border-[#404040]"><code>${md.utils.escapeHtml(str)}</code></pre>`;
     }
 });
+
+function populateModelSelector(availableModels, selectedModel){
+    modelSelector.innerHTML = ''; // clear exsisting models
+    availableModels.forEach((model, idx) => {
+        const option = new Option(model, model);
+        option.className = 'bg-[#2d2d2d]';
+        modelSelector.add(option);
+    });
+    // document.getElementById('modelSelector').selectedIndex = 0; // select the first model for now
+    document.getElementById('modelSelector').value = selectedModel;
+}
 
 function addMessage(content, isUser = true) {
     const loadingIndicator = chatContainer.querySelector('.loading-indicator');
@@ -96,11 +110,23 @@ questionInput.addEventListener('keydown', (e) => {
     }
 });
 
+modelSelector.addEventListener('change', function(e) {
+    const selectedModel = e.target.value;
+    vscode.postMessage({ command: "selectedModel", selectedModel });
+});
+
 window.addEventListener('message', event => {
-    const { command, text } = event.data;
+    const { command, text, availableModels, selectedModel } = event.data;
     if (command === "chatResponse") {
         updateLastAssistantMessage(text);
     }else if (command === "ollamaInstallErorr"){
         document.getElementById('ollamaError').classList.remove('hidden');
+    } else if (command === "ollamaModelsNotDownloaded"){
+        document.getElementById('ollamaError').classList.remove('hidden');
     }
+
+    if(availableModels && selectedModel){
+        populateModelSelector(availableModels, selectedModel);
+    }
+
 });

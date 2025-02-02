@@ -38,7 +38,23 @@ return /*html*/ `
     <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatContainer">
         <!-- Header -->
         <div class="text-center mb-8">
-            <p class="text-[#858585] text-sm">Ask your deepest desires</p>
+            <p class="text-[#858585] text-sm mb-3">Ask your deepest desires with</p>
+            <div class="relative w-56 mx-auto transform hover:scale-[1.02] transition-transform duration-200">
+                <select 
+                    id="modelSelector"
+                    class="w-full px-4 py-2 bg-[#3c3c3c]/90 text-[#cccccc] rounded-xl border-2 border-[#4d4d4d]/50 
+                        focus:outline-none focus:ring-2 focus:ring-[#0e639c]/80 focus:border-[#0e639c]/80
+                        backdrop-blur-sm shadow-lg appearance-none transition-all duration-200
+                        hover:border-[#5e5e5e]"
+                >
+                </select>
+                <div class="pointer-events-none absolute inset-y-0 right-3 flex items-center">
+                    <svg class="h-5 w-5 text-[#858585]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+                    </svg>
+                </div>
+            </div>
+        </div>
         </div>
     </div>
 
@@ -58,7 +74,7 @@ return /*html*/ `
                     focus:ring-offset-2 focus:ring-offset-[#1e1e1e] placeholder-[#858585]
                     transition-all duration-100"
                 placeholder="Type your question here..."
-                rows="2"
+                rows="1"
             ></textarea>
             <button
                 id="submitBtn"
