@@ -21,12 +21,12 @@
     "configuration": {
       "title": "Ollama Chat",
       "properties": {
-          "ollama-chat.defaultModel": {
-              "type": "string",
-              "default": "qwen2.5-coder",
-              "markdownDescription": "Model to run query against. Run `ollama list` on terminal to see NAME of the available models"
-          }
+        "ollama-chat.defaultModel": {
+          "type": "string",
+          "default": "qwen2.5-coder",
+          "markdownDescription": "Model to run query against. Run `ollama list` on terminal to see NAME of the available models"
         }
+      }
     }
   },
   "scripts": {
