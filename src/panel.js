@@ -27,13 +27,12 @@ function addMessage(content, isUser = true) {
     if (loadingIndicator) {loadingIndicator.remove();};
 
     const messageDiv = document.createElement('div');
-    //TODO: I want this centered
-    messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`;
+    messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`;
     messageDiv.innerHTML = `
         <div class="max-w-3xl w-full p-4 rounded-lg ${
             isUser 
-                ? 'bg-[#0e639c] text-[#ffffff]' 
-                : 'bg-[#252526] text-[#d4d4d4] border border-[#404040]'
+                ? 'bg-[#0e639c] text-[#ffffff] mx-auto'
+                : 'bg-[#252526] text-[#d4d4d4] border border-[#404040] mx-auto'
         } shadow-lg transition-all duration-200 hover:shadow-xl">
             <div class="prose max-w-none">
                 <div class="whitespace-pre-wrap [&_a]:text-[#3794ff] [&_a:hover]:text-[#4aa0ff] [&_code]:bg-[#373737]">
@@ -65,6 +64,7 @@ function updateLastAssistantMessage(content) {
     }
     chatContainer.scrollTop = chatContainer.scrollHeight;
 }
+
 
 function showLoading() {
     const loadingDiv = document.createElement('div');
