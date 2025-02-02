@@ -8,6 +8,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 	const ollamaBinaryName = "ollama";
     globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
+    globalThis.selectedModel = undefined;
 
 
 	executableIsAvailable(ollamaBinaryName);
@@ -17,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 		//TODO: all these could be done in parallel
 		const ollamaInstalled = executableIsAvailable(ollamaBinaryName);
 		const availableModels = getAvaialableModels();
+
 
 		const panel = vscode.window.createWebviewPanel(
 				"Ollama chat",
@@ -31,11 +33,21 @@ export function activate(context: vscode.ExtensionContext) {
 				},
 		);
 		panel.webview.html = getWebViewHtmlContent(context, panel.webview);
+
 		if(ollamaInstalled === false){
 			panel.webview.postMessage({command: "ollamaInstallErorr", text: "ollama not installed"});
 		};
 
-		panel.webview.postMessage({availableModels: availableModels});
+		if(!selectedModel){
+			if(availableModels.length >= 1){
+				selectedModel = availableModels[0];
+			} else {
+				panel.webview.postMessage({command: "ollamaModelsNotDownloaded", text: "Models not downloded"});
+				return;
+			}
+		}
+
+		panel.webview.postMessage({availableModels: availableModels, selectedModel: selectedModel});
 
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";
@@ -43,15 +55,17 @@ export function activate(context: vscode.ExtensionContext) {
 				const promt = { role: 'user', content: message.question};
 				const response = await ollama.chat(
 					{
-						model: availableModels[0],
+						model: selectedModel || "", //FIXME: we need to show an error instead. not have "" as deafult results in type error
 						messages: [promt],
 						stream: true,
 					}
 				);
 				for await (const part of response) {
 					responseText += part.message.content;
-					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels});
+					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels, selectedModel: selectedModel});
 				}
+			} else if (message.command === "selectedModel"){
+				selectedModel = message.selectedModel;
 			}
 		});
 

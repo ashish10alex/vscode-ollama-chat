@@ -74,7 +74,7 @@ return /*html*/ `
                     focus:ring-offset-2 focus:ring-offset-[#1e1e1e] placeholder-[#858585]
                     transition-all duration-100"
                 placeholder="Type your question here..."
-                rows="2"
+                rows="1"
             ></textarea>
             <button
                 id="submitBtn"

@@ -24,14 +24,15 @@ const md = markdownit({
     }
 });
 
-function populateModelSelector(availableModels){
+function populateModelSelector(availableModels, selectedModel){
     modelSelector.innerHTML = ''; // clear exsisting models
     availableModels.forEach((model, idx) => {
         const option = new Option(model, model);
         option.className = 'bg-[#2d2d2d]';
         modelSelector.add(option);
     });
-    document.getElementById('modelSelector').selectedIndex = 0; // select the first model for now
+    // document.getElementById('modelSelector').selectedIndex = 0; // select the first model for now
+    document.getElementById('modelSelector').value = selectedModel;
 }
 
 function addMessage(content, isUser = true) {
@@ -108,15 +109,23 @@ questionInput.addEventListener('keydown', (e) => {
     }
 });
 
+modelSelector.addEventListener('change', function(e) {
+    const selectedModel = e.target.value;
+    vscode.postMessage({ command: "selectedModel", selectedModel });
+});
+
 window.addEventListener('message', event => {
-    const { command, text, availableModels } = event.data;
+    const { command, text, availableModels, selectedModel } = event.data;
     if (command === "chatResponse") {
         updateLastAssistantMessage(text);
     }else if (command === "ollamaInstallErorr"){
         document.getElementById('ollamaError').classList.remove('hidden');
+    } else if (command === "ollamaModelsNotDownloaded"){
+        document.getElementById('ollamaError').classList.remove('hidden');
     }
 
-    if(availableModels){
-        populateModelSelector(availableModels);
+    if(availableModels && selectedModel){
+        populateModelSelector(availableModels, selectedModel);
     }
+
 });
