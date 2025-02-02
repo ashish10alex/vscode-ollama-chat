@@ -4,6 +4,10 @@
   "description": "Experimental extension to chat with models available to download from Ollama",
   "publisher": "ashishalex",
   "icon": "docs/ollama-chat-logo.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ashish10alex/vscode-ollama-chat.git"
+  },
   "version": "0.0.1",
   "engines": {
     "vscode": "^1.96.0"
