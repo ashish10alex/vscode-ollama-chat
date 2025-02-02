@@ -24,28 +24,23 @@ const md = markdownit({
 
 function addMessage(content, isUser = true) {
     const loadingIndicator = chatContainer.querySelector('.loading-indicator');
-    if (loadingIndicator) {loadingIndicator.remove();};
+    if (loadingIndicator) {
+        loadingIndicator.remove();
+    }
 
     const messageDiv = document.createElement('div');
     messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`;
-    messageDiv.innerHTML = `
-        <div class="max-w-3xl w-full p-4 rounded-lg ${
-            isUser 
-                ? 'bg-[#0e639c] text-[#ffffff] mx-auto'
-                : 'bg-[#252526] text-[#d4d4d4] border border-[#404040] mx-auto'
-        } shadow-lg transition-all duration-200 hover:shadow-xl">
-            <div class="prose max-w-none">
-                <div class="whitespace-pre-wrap [&_a]:text-[#3794ff] [&_a:hover]:text-[#4aa0ff] [&_code]:bg-[#373737]">
-                    ${isUser ? content : md.render(content)}
-                </div>
-            </div>
-        </div>
-    `;
+    messageDiv.innerHTML = `<div class="max-w-3xl w-full p-4 rounded-lg ${
+        isUser 
+            ? 'bg-[#0066AD] text-[#ffffff] mx-auto'
+            : 'bg-[#252526] text-[#d4d4d4] border border-[#404040] mx-auto'
+    } shadow-lg transition-all duration-200 hover:shadow-xl"><div class="prose max-w-none"><div class="whitespace-pre-wrap [&_a]:text-[#3794ff] [&_a:hover]:text-[#4aa0ff] [&_code]:bg-[#373737]">${isUser ? content : md.render(content)}</div></div></div>`;
 
     chatContainer.appendChild(messageDiv);
     chatContainer.scrollTop = chatContainer.scrollHeight;
     return messageDiv;
 }
+
 
 function updateLastAssistantMessage(content) {
     const loadingIndicator = chatContainer.querySelector('.loading-indicator');
