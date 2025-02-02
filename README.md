@@ -1,4 +1,4 @@
-# Seek Deep
+# Ollama Chat
 
 An experimental VS Code extension that allows you to use self hosted models downloaded from [ollama](https://ollama.com/download).
 
