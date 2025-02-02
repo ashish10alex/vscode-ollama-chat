@@ -29,61 +29,54 @@ return `
             100% { transform: rotate(360deg); }
         }
         .loader {
-            border-top-color: #3B82F6;
+            border-top-color: rgb(37 99 235);
             animation: spin 1s linear infinite;
         }
-        .whitespace-pre-wrap {
-            white-space: pre-wrap;
-            word-wrap: break-word;
-        }
     </style>
-
-    <link href=" https://cdn.jsdelivr.net/npm/prismjs@1.29.0/themes/prism.min.css " rel="stylesheet">
     <link rel="stylesheet" href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
-
 </head>
-<body class="bg-white dark:bg-gray-900 h-screen flex flex-col">
+<body class="bg-[#1e1e1e] text-[#d4d4d4] font-sans h-screen flex flex-col">
 
     <script src="https://cdn.jsdelivr.net/npm/markdown-it@14.1.0/dist/markdown-it.min.js"></script>
 
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
-    <!-- and it's easy to individually load additional languages -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
-
     <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
 
     <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatContainer">
         <!-- Header -->
         <div class="text-center mb-8">
-            <p class="text-gray-600 dark:text-gray-300">Ask your deepest desires</p>
+            <p class="text-[#858585] text-sm">Ask your deepest desires</p>
         </div>
-
-        <!-- Messages will be appended here -->
     </div>
 
     <!-- Input Area -->
-    <div class="border-t border-gray-200 dark:border-gray-700 p-4 bg-white dark:bg-gray-900">
-        <div class="flex space-x-2">
+    <div class="border-t border-[#252526] p-4 bg-[#1e1e1e]">
+        <div class="flex gap-2">
             <textarea 
-                type="text" 
                 id="questionInput"
-                class="flex-1 p-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 dark:bg-gray-800 dark:border-gray-700 dark:text-white"
+                class="w-full p-2 bg-[#3c3c3c] text-[#cccccc] rounded border border-[#3c3c3c] 
+                    focus:outline-none focus:border-[#0e639c] focus:ring-2 focus:ring-[#0e639c] 
+                    focus:ring-offset-2 focus:ring-offset-[#1e1e1e] placeholder-[#858585]
+                    transition-all duration-100"
                 placeholder="Type your question here..."
                 autofocus
+                rows="3"
             ></textarea>
             <button 
                 id="submitBtn"
-                class="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                class="h-fit px-4 py-2 bg-[#333333] text-[#cccccc] rounded hover:bg-[#404040] focus:outline-none focus:ring-2 focus:ring-[#4d4d4d] border border-[#454545]"
             >
                 Send
             </button>
         </div>
     </div>
 
-    <script nonce="${nonce}" type="text/javascript"  src="${scriptUri}"></script>
+    <script nonce="${nonce}" type="text/javascript" src="${scriptUri}"></script>
 
 </body>
 </html>
+
 `;
 }
