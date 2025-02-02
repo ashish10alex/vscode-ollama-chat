@@ -26,11 +26,12 @@ const md = markdownit({
 
 function populateModelSelector(availableModels){
     modelSelector.innerHTML = ''; // clear exsisting models
-    availableModels.forEach(model => {
+    availableModels.forEach((model, idx) => {
         const option = new Option(model, model);
         option.className = 'bg-[#2d2d2d]';
         modelSelector.add(option);
     });
+    document.getElementById('modelSelector').selectedIndex = 0; // select the first model for now
 }
 
 function addMessage(content, isUser = true) {

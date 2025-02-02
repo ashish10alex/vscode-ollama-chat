@@ -9,15 +9,12 @@ export function activate(context: vscode.ExtensionContext) {
 	const ollamaBinaryName = "ollama";
     globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
 
-	let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
-	if(!defaultModel){
-		defaultModel = 'qwen2.5-coder';
-	}
-	globalThis.defaultModel = defaultModel;
 
 	executableIsAvailable(ollamaBinaryName);
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
+
+		//TODO: all these could be done in parallel
 		const ollamaInstalled = executableIsAvailable(ollamaBinaryName);
 		const availableModels = getAvaialableModels();
 
@@ -46,7 +43,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const promt = { role: 'user', content: message.question};
 				const response = await ollama.chat(
 					{
-						model: defaultModel,
+						model: availableModels[0],
 						messages: [promt],
 						stream: true,
 					}
