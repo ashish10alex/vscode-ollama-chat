@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.3...v0.0.4) (2025-02-02)
+
+
+### Bug Fixes
+
+* **chat:** error message check for ollama cli ([8846155](https://github.com/ashish10alex/vscode-ollama-chat/commit/8846155f264d484dd10bde1e97f3e4e36b319004))
+
 ### [0.0.3](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.2...v0.0.3) (2025-02-02)
 
 
