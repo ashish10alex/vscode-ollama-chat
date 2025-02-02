@@ -12,7 +12,7 @@ How to use ?
     ollama run qwen2.5-coder
     ```
 
-2. Open extension in debugger mode and run command `Seek Deep` in command panel
+2. Open extension in debugger mode and run command `Ollama Chat` in command panel
 
 ## TODO
 
