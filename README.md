@@ -17,13 +17,11 @@ An **experimental** VS Code extension that allows you to use self hosted models 
 
 ## TODO
 
-* [ ] Show error if user does not have ollama
-* [ ] Show error if user does not have a model
-* [ ] List available models in web view and make selection possible from the web view
-* [ ] Retain context when conversating
-* [ ] Add copy code functionality
-* [ ] Can we integrate it to be used directly in a file, this would require a faster model
-* [ ] Provide options for user to choose the model they want to use
-* [ ] Do we need to use a build system like web pack ?
-* [ ] Audio search
+* [ ] feat: Show error if user does not have ollama started
+* [ ] feat: Show error if user does not have a model. Show them example command to install model
+* [ ] fix: when asking the second question output is overwritten on the last output thread
+* [ ] feat: List available models in web view and make selection possible from the web view
+* [ ] feat: Retain context when conversating
 * [ ] Processes pdfs ?
+* [ ] Audio search
+* [ ] Do we need to use a build system like web pack ?
