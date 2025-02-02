@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import os from 'os';
 import ollama from 'ollama';
-import { executableIsAvailable } from './utils';
+import { executableIsAvailable, getAvaialableModels } from './utils';
 import { getWebViewHtmlContent } from './chat';
 
 export function activate(context: vscode.ExtensionContext) {
@@ -12,6 +12,8 @@ export function activate(context: vscode.ExtensionContext) {
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
 		const ollamaInstalled = executableIsAvailable(ollamaBinaryName);
+		const availableModels = getAvaialableModels();
+		console.log(availableModels);
 
 		let defaultModel:string|undefined = vscode.workspace.getConfiguration('ollama-chat').get('defaultModel');
 		if(!defaultModel){
@@ -49,7 +51,7 @@ export function activate(context: vscode.ExtensionContext) {
 				for await (const part of response) {
 					responseText += part.message.content;
 					// console.log(part.message.content);
-					panel.webview.postMessage({command: "chatResponse", text: responseText});
+					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels});
 				}
 			}
 		});
