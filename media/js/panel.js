@@ -61,13 +61,12 @@ function addMessage(content, isUser = true) {
     return messageDiv;
 }
 
-// Call this when you want to start a new assistant answer (for a new question)
 function startNewAssistantAnswer(initialContent = '') {
-    // Create an empty assistant message block and store the reference.
-    currentAssistantMessage = addMessage(initialContent, false);
+    const messageDiv = addMessage(initialContent, false);
+    messageDiv.style.display = "none";
+    currentAssistantMessage = messageDiv;
 }
 
-// Instead of searching for the last assistant block, update the currentAssistantMessage.
 function updateLastAssistantMessage(content) {
     const loadingIndicator = chatContainer.querySelector('.loading-indicator');
     if (loadingIndicator) {
@@ -75,6 +74,9 @@ function updateLastAssistantMessage(content) {
     }
 
     if (currentAssistantMessage) {
+        if (currentAssistantMessage.style.display === "none") {
+            currentAssistantMessage.style.display = "block";
+        }
         const contentDiv = currentAssistantMessage.querySelector('.whitespace-pre-wrap');
         if (contentDiv) {
             contentDiv.innerHTML = md.render(content);
@@ -110,8 +112,7 @@ async function sendMessage() {
     addMessage(question, true);
     questionInput.value = '';
     
-    // Start a new assistant message block for the answer. 
-    // This ensures that a new answer block is used for every question.
+    // Start a new (hidden) assistant message block for the answer.
     startNewAssistantAnswer();
     
     showLoading();
