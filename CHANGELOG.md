@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.9](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.8...v0.0.9) (2025-02-03)
+
+
+### Features
+
+* better autoscrolling ([771e072](https://github.com/ashish10alex/vscode-ollama-chat/commit/771e0728d777da986cd3a566f4b5fa33805b0818))
+
 ### [0.0.8](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.7...v0.0.8) (2025-02-03)
 
 
