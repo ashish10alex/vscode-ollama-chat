@@ -15,6 +15,12 @@ document.addEventListener('DOMContentLoaded', () => {
     hljs.addPlugin(new CopyButtonPlugin({ autohide: false }));
 });
 
+questionInput.addEventListener('input', () => {
+    // automatically resize text area based on input
+    questionInput.style.height = 'auto';
+    questionInput.style.height = questionInput.scrollHeight + 'px';
+});
+
 const md = markdownit({
     highlight: (str, lang) => {
         if (lang && hljs.getLanguage(lang)) {
@@ -111,6 +117,7 @@ async function sendMessage() {
     // Add the user's message.
     addMessage(question, true);
     questionInput.value = '';
+    questionInput.style.height = 'auto';
     
     // Start a new (hidden) assistant message block for the answer.
     startNewAssistantAnswer();
