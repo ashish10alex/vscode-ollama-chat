@@ -51,7 +51,6 @@ function addMessage(content, isUser = true) {
     } shadow-lg transition-all duration-200 hover:shadow-xl"><div class="prose max-w-none"><div class="whitespace-pre-wrap [&_a]:text-[#3794ff] [&_a:hover]:text-[#4aa0ff] [&_code]:bg-[#373737]">${isUser ? content : md.render(content)}</div></div></div>`;
 
     chatContainer.appendChild(messageDiv);
-    chatContainer.scrollTop = chatContainer.scrollHeight;
     return messageDiv;
 }
 
@@ -71,7 +70,6 @@ function updateLastAssistantMessage(content) {
     } else {
         addMessage(content, false);
     }
-    chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
 
