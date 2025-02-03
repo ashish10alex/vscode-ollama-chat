@@ -4,6 +4,7 @@ const questionInput = document.getElementById('questionInput');
 const submitBtn = document.getElementById('submitBtn');
 const modelSelector = document.getElementById('modelSelector');
 
+let currentAssistantMessage = null;
 
 window.onload = function() {
     questionInput.focus();
@@ -25,17 +26,17 @@ const md = markdownit({
     }
 });
 
-function populateModelSelector(availableModels, selectedModel){
-    modelSelector.innerHTML = ''; // clear exsisting models
-    availableModels.forEach((model, idx) => {
+function populateModelSelector(availableModels, selectedModel) {
+    modelSelector.innerHTML = ''; // clear existing models
+    availableModels.forEach((model) => {
         const option = new Option(model, model);
         option.className = 'bg-[#2d2d2d]';
         modelSelector.add(option);
     });
-    // document.getElementById('modelSelector').selectedIndex = 0; // select the first model for now
     document.getElementById('modelSelector').value = selectedModel;
 }
 
+// Create a new message. If it's an assistant message, store it as the currentAssistantMessage.
 function addMessage(content, isUser = true) {
     const loadingIndicator = chatContainer.querySelector('.loading-indicator');
     if (loadingIndicator) {
@@ -45,37 +46,49 @@ function addMessage(content, isUser = true) {
     const messageDiv = document.createElement('div');
     messageDiv.className = `flex ${isUser ? 'justify-end' : 'justify-start'} mb-2`;
     messageDiv.innerHTML = `<div class="max-w-7xl w-full p-4 rounded-lg ${
-        isUser 
+        isUser
             ? 'bg-[#0066AD] text-[#ffffff] mx-auto'
             : 'bg-[#252526] text-[#d4d4d4] border border-[#404040] mx-auto'
     } shadow-lg transition-all duration-200 hover:shadow-xl"><div class="prose max-w-none"><div class="whitespace-pre-wrap [&_a]:text-[#3794ff] [&_a:hover]:text-[#4aa0ff] [&_code]:bg-[#373737]">${isUser ? content : md.render(content)}</div></div></div>`;
 
     chatContainer.appendChild(messageDiv);
+
+    // When adding an assistant message, update the current block reference.
+    if (!isUser) {
+        currentAssistantMessage = messageDiv;
+    }
+
     return messageDiv;
 }
 
+// Call this when you want to start a new assistant answer (for a new question)
+function startNewAssistantAnswer(initialContent = '') {
+    // Create an empty assistant message block and store the reference.
+    currentAssistantMessage = addMessage(initialContent, false);
+}
 
+// Instead of searching for the last assistant block, update the currentAssistantMessage.
 function updateLastAssistantMessage(content) {
     const loadingIndicator = chatContainer.querySelector('.loading-indicator');
-    if (loadingIndicator) {loadingIndicator.remove();};
+    if (loadingIndicator) {
+        loadingIndicator.remove();
+    }
 
-    const assistantMessages = chatContainer.querySelectorAll('.justify-start');
-    if (assistantMessages.length > 0) {
-        const lastAssistantMessage = assistantMessages[assistantMessages.length - 1];
-        const contentDiv = lastAssistantMessage.querySelector('.whitespace-pre-wrap');
+    if (currentAssistantMessage) {
+        const contentDiv = currentAssistantMessage.querySelector('.whitespace-pre-wrap');
         if (contentDiv) {
             contentDiv.innerHTML = md.render(content);
             hljs.highlightAll();
         }
     } else {
-        addMessage(content, false);
+        // In case no block exists, create one.
+        currentAssistantMessage = addMessage(content, false);
     }
 }
 
-
 function showLoading() {
     const loadingDiv = document.createElement('div');
-    loadingDiv.className = 'flex justify-start loading-indicator mb-6';
+    loadingDiv.className = 'flex justify-center loading-indicator mb-6';
     loadingDiv.innerHTML = `
         <div class="max-w-3xl p-4 rounded-lg bg-[#252526] border border-[#404040] w-full">
             <div class="flex items-center space-x-3">
@@ -89,13 +102,24 @@ function showLoading() {
 
 async function sendMessage() {
     const question = questionInput.value.trim();
-    if (!question) {return;};
-
+    if (!question) {
+        return;
+    }
+    
+    // Add the user's message.
     addMessage(question, true);
     questionInput.value = '';
+    
+    // Start a new assistant message block for the answer. 
+    // This ensures that a new answer block is used for every question.
+    startNewAssistantAnswer();
+    
     showLoading();
 
-    vscode.postMessage({ command: "chat", question });
+    vscode.postMessage({
+        command: "chat",
+        question
+    });
 }
 
 // Event listeners
@@ -117,14 +141,12 @@ window.addEventListener('message', event => {
     const { command, text, availableModels, selectedModel } = event.data;
     if (command === "chatResponse") {
         updateLastAssistantMessage(text);
-    }else if (command === "ollamaInstallErorr"){
+    } else if (command === "ollamaInstallErorr") {
         document.getElementById('ollamaError').classList.remove('hidden');
-    } else if (command === "ollamaModelsNotDownloaded"){
+    } else if (command === "ollamaModelsNotDownloaded") {
         document.getElementById('ollamaError').classList.remove('hidden');
     }
-
-    if(availableModels && selectedModel){
+    if (availableModels && selectedModel) {
         populateModelSelector(availableModels, selectedModel);
     }
-
 });
