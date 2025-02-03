@@ -5,6 +5,20 @@ const submitBtn = document.getElementById('submitBtn');
 const modelSelector = document.getElementById('modelSelector');
 
 let currentAssistantMessage = null;
+let autoScrollEnabled = true;  // flag to control auto-scroll
+
+function scrollToBottom() {
+    chatContainer.scrollTop = chatContainer.scrollHeight;
+}
+
+chatContainer.addEventListener('scroll', () => {
+    // If near the bottom (within 50px), allow auto scrolling.
+    if (chatContainer.scrollHeight - chatContainer.scrollTop - chatContainer.clientHeight < 50) {
+        autoScrollEnabled = true;
+    } else {
+        autoScrollEnabled = false;
+    }
+});
 
 window.onload = function() {
     questionInput.focus();
@@ -64,6 +78,10 @@ function addMessage(content, isUser = true) {
         currentAssistantMessage = messageDiv;
     }
 
+    if (autoScrollEnabled) {
+        scrollToBottom();
+    }
+
     return messageDiv;
 }
 
@@ -92,6 +110,10 @@ function updateLastAssistantMessage(content) {
         // In case no block exists, create one.
         currentAssistantMessage = addMessage(content, false);
     }
+
+    if (autoScrollEnabled) {
+        scrollToBottom();
+    }
 }
 
 function showLoading() {
@@ -106,6 +128,10 @@ function showLoading() {
         </div>
     `;
     chatContainer.appendChild(loadingDiv);
+
+    if (autoScrollEnabled) {
+        scrollToBottom();
+    }
 }
 
 async function sendMessage() {
