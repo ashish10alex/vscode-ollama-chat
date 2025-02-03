@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.5...v0.0.6) (2025-02-03)
+
+
+### Bug Fixes
+
+* disable autoscroll to avoid not being able to scroll up when text is rendering ([a17b36d](https://github.com/ashish10alex/vscode-ollama-chat/commit/a17b36dce6c3111e5da2868364b6849121d2e0cb))
+
 ### [0.0.5](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.4...v0.0.5) (2025-02-02)
 
 
