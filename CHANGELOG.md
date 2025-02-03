@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.7](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.6...v0.0.7) (2025-02-03)
+
+
+### Features
+
+* better ux when loading new messsages ([c233345](https://github.com/ashish10alex/vscode-ollama-chat/commit/c233345318efef1bfb18e617681b037b82834b79))
+
+
+### Bug Fixes
+
+* when asking the second question output is overwritten on the last output thread ([4ea74e6](https://github.com/ashish10alex/vscode-ollama-chat/commit/4ea74e6ed5be8ce92f47975d99629bffc1e75089))
+
 ### [0.0.6](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.5...v0.0.6) (2025-02-03)
 
 
