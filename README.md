@@ -17,11 +17,12 @@ An **experimental** VS Code extension that allows you to use self hosted models 
 
 ## TODO
 
-* [ ] feat: Show error if user does not have ollama started either manually via opening the app or using `ollama serve`
-* [ ] feat: Show error if user does not have a model. Show them example command to install model
-* [ ] fix: when asking the second question output is overwritten on the last output thread
-* [ ] feat: autoscrolling with detection of when using scrolls up we take them there
-* [ ] feat: Retain context when conversating
-* [ ] feat: Processes pdfs ?
-* [ ] feat: Audio search
+* [ ] feat:  show error if user does not have ollama started either manually via opening the app or using `ollama serve`
+* [ ] feat:  show error if user does not have a model. Show them example command to install model
+* [ ] fix:   when asking the second question output is overwritten on the last output thread
+* [ ] feat:  autoscrolling with detection of when using scrolls up we take them there
+* [ ] feat:  retain context when conversation
+* [ ] feat:  restrict user to certain number of tokens when sending message ?
+* [ ] feat:  processes pdfs ?
+* [ ] feat:  audio search
 * [ ] build: Do we need to use a build system like web pack ?
