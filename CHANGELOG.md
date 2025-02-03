@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.8](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.7...v0.0.8) (2025-02-03)
+
+
+### Features
+
+* automatically resize text area based on question height ([bc79625](https://github.com/ashish10alex/vscode-ollama-chat/commit/bc79625742101cbb4cacdbc986f8f85cd7ae36bb))
+* update README ([ec9ec75](https://github.com/ashish10alex/vscode-ollama-chat/commit/ec9ec75bdffa61439dffc7caaf4bb4b64586658c))
+
 ### [0.0.7](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.6...v0.0.7) (2025-02-03)
 
 
