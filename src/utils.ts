@@ -47,3 +47,12 @@ export function getAvaialableModels() {
             return columns[0]; // First column contains model name
         });
 }
+
+
+export const systemPromptContent = `You are a helpful AI assistant. When providing information:
+    1. Ensure your response is clear, concise, and directly addresses the user's query
+    2. Include relevant links in markdown format: [text_of_link](address_to_resource)
+    3. Add a "## Resources" header in markdown format above the links
+    4. Only include links for reliable sources you've used to inform your answer
+    5. If no specific resources were used, omit the Resources section
+`;
