@@ -58,6 +58,12 @@ return /*html*/ `
         </div>
     </div>
 
+    <button id="refreshBtn" class="absolute top-4 right-4 p-2 bg-[#0066AD] text-white rounded-full hover:bg-[#0077CC] transition-colors">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M4 2a1 1 0 011 1v2.101a7.002 7.002 0 0111.601 2.566 1 1 0 11-1.885.666A5.002 5.002 0 005.999 7H9a1 1 0 010 2H4a1 1 0 01-1-1V3a1 1 0 011-1zm.008 9.057a1 1 0 011.276.61A5.002 5.002 0 0014.001 13H11a1 1 0 110-2h5a1 1 0 011 1v5a1 1 0 11-2 0v-2.101a7.002 7.002 0 01-11.601-2.566 1 1 0 01.61-1.276z" clip-rule="evenodd" />
+        </svg>
+    </button>
+
       <!-- Error message for Ollama CLI not installed -->
     <div id="ollamaError" class="hidden bg-red-500 text-white p-4 rounded-md mb-4">
       <p class="font-bold">Error: Ollama CLI not installed</p>
@@ -78,7 +84,7 @@ return /*html*/ `
             ></textarea>
             <button
                 id="submitBtn"
-                class="h-fit px-4 py-2 bg-[#333333] text-[#cccccc] rounded hover:bg-[#404040] focus:outline-none focus:ring-2 focus:ring-[#4d4d4d] border border-[#454545]"
+                class="h-fit px-4 py-2 bg-[#0066AD] text-[#cccccc] rounded hover:bg-[#004d80] focus:outline-none focus:ring-2 focus:ring-[#4d4d4d] border border-[#454545]"
             >
                 Send
             </button>

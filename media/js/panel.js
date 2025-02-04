@@ -163,6 +163,9 @@ questionInput.addEventListener('keydown', (e) => {
     if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
         sendMessage();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault(); 
+        clearChat();
     }
 });
 
@@ -170,6 +173,31 @@ modelSelector.addEventListener('change', function(e) {
     const selectedModel = e.target.value;
     vscode.postMessage({ command: "selectedModel", selectedModel });
 });
+
+function clearChat() {
+    const chatContainer = document.getElementById('chatContainer');
+    
+    // Preserve these elements (header/model selector)
+    const preservedElements = Array.from(chatContainer.children).filter(child => {
+        return child.classList.contains('text-center') || // Header container
+               child.classList.contains('loading-indicator'); // Any loading indicators
+    });
+
+    // Remove all children except preserved elements
+    while (chatContainer.firstChild) {
+        chatContainer.removeChild(chatContainer.firstChild);
+    }
+
+    // Add back preserved elements
+    preservedElements.forEach(element => {
+        chatContainer.appendChild(element);
+    });
+
+    currentAssistantMessage = null;
+    questionInput.focus();
+}
+
+refreshBtn.addEventListener('click', clearChat);
 
 window.addEventListener('message', event => {
     const { command, text, availableModels, selectedModel } = event.data;
