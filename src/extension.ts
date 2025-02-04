@@ -52,7 +52,7 @@ export function activate(context: vscode.ExtensionContext) {
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";
 			if(message.command === 'chat'){
-				const systemPromt = { role: 'system', content: 'give me links in markdown format [text_of_link](address_to_resource) for any resource that you wnat to point me to from where you inferred the answer'};
+				const systemPromt = { role: 'system', content: 'give me links in markdown format [text_of_link](address_to_resource) for any resource that you wnat to point me to from where you inferred the answer add a header resources in markdown format above the links'};
 				const userPromt = { role: 'user', content: message.question};
 				const response = await ollama.chat(
 					{
