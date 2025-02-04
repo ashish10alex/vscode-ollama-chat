@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.11](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.10...v0.0.11) (2025-02-04)
+
+
+### Features
+
+* improve system prompt ([1521e18](https://github.com/ashish10alex/vscode-ollama-chat/commit/1521e185075b0273fc91ded2c79a2c1fbede66d4))
+* reset contents of the chat window to start a new conversation ([c4bdd73](https://github.com/ashish10alex/vscode-ollama-chat/commit/c4bdd734dec815f7532509e81a74212219569c30))
+
 ### [0.0.10](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.9...v0.0.10) (2025-02-04)
 
 
