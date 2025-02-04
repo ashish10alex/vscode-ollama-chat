@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.10](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.9...v0.0.10) (2025-02-04)
+
+
+### Features
+
+* add system prompt to get link to resources from where answer has been inferred ([4331a81](https://github.com/ashish10alex/vscode-ollama-chat/commit/4331a81d212d84df2e0931b211bd30827ac9f735))
+
 ### [0.0.9](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.8...v0.0.9) (2025-02-03)
 
 
