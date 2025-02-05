@@ -3,6 +3,7 @@ const chatContainer = document.getElementById('chatContainer');
 const questionInput = document.getElementById('questionInput');
 const submitBtn = document.getElementById('submitBtn');
 const modelSelector = document.getElementById('modelSelector');
+const refreshBtn = document.getElementById('refreshBtn');
 
 let currentAssistantMessage = null;
 let autoScrollEnabled = true;  // flag to control auto-scroll
@@ -139,6 +140,9 @@ async function sendMessage() {
     if (!question) {
         return;
     }
+
+    submitBtn.disabled = true; 
+    refreshBtn.disabled = true;
     
     // Add the user's message.
     addMessage(question, true);
@@ -200,13 +204,21 @@ function clearChat() {
 refreshBtn.addEventListener('click', clearChat);
 
 window.addEventListener('message', event => {
-    const { command, text, availableModels, selectedModel } = event.data;
+    const { command, text, availableModels, selectedModel, messageStreamEnded} = event.data;
     if (command === "chatResponse") {
         updateLastAssistantMessage(text);
     } else if (command === "ollamaInstallErorr") {
         document.getElementById('ollamaError').classList.remove('hidden');
+        submitBtn.disabled = false;
+        refreshBtn.disabled = false;
     } else if (command === "ollamaModelsNotDownloaded") {
         document.getElementById('ollamaError').classList.remove('hidden');
+        submitBtn.disabled = false;
+        refreshBtn.disabled = false;
+    } else if (messageStreamEnded === true) {
+        console.log("MESSAGE STREAM ENDED");
+        submitBtn.disabled = false;
+        refreshBtn.disabled = false;
     }
     if (availableModels && selectedModel) {
         populateModelSelector(availableModels, selectedModel);

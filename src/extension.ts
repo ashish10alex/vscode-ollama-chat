@@ -65,6 +65,7 @@ export function activate(context: vscode.ExtensionContext) {
 					responseText += part.message.content;
 					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels, selectedModel: selectedModel});
 				}
+				panel.webview.postMessage({messageStreamEnded: true});
 			} else if (message.command === "selectedModel"){
 				selectedModel = message.selectedModel;
 			}
