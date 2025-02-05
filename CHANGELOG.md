@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.12](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.11...v0.0.12) (2025-02-05)
+
+
+### Features
+
+* disable send message button when the current message is being rendered ([b7d9d2c](https://github.com/ashish10alex/vscode-ollama-chat/commit/b7d9d2cc905b95542abf8bac9970b7ad315c7536))
+
 ### [0.0.11](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.10...v0.0.11) (2025-02-04)
 
 
