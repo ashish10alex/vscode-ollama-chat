@@ -1,7 +1,7 @@
 {
   "name": "ollama-chat",
   "displayName": "Ollama Chat",
-  "description": "Experimental extension to chat with models available to download from Ollama",
+  "description": "Chat offline with models available to download from Ollama",
   "publisher": "ashishalex",
   "icon": ".docs/ollama-chat-logo.png",
   "repository": {
