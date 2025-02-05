@@ -216,7 +216,6 @@ window.addEventListener('message', event => {
         submitBtn.disabled = false;
         refreshBtn.disabled = false;
     } else if (messageStreamEnded === true) {
-        console.log("MESSAGE STREAM ENDED");
         submitBtn.disabled = false;
         refreshBtn.disabled = false;
     }
