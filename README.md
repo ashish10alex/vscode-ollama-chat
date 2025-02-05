@@ -1,6 +1,6 @@
 # Ollama Chat
 
-An **experimental** VS Code extension that allows you to use self hosted models offline that can be downloaded from [ollama](https://ollama.com/download).
+VS Code extension that allows you to chat with self hosted models offline that can be downloaded from [ollama](https://ollama.com/download).
 
 <img src="./.docs/ollama-chat.gif" alt="ollam-chat-demo" width="80%">
 
@@ -13,7 +13,7 @@ An **experimental** VS Code extension that allows you to use self hosted models 
     ```
 
 2. Open  terminal and run `ollama serve` or manually open Ollama app
-3. Run `Ollama Chat` comamnd in vscode command pallet this will open the chat window shown in the screenshot
+3. Open the command palette in VSCode by pressing Cmd+Shift+P (Mac) or Ctrl+Shift+P (Windows/Linux), then run the Ollama Chat command. This will open the chat window shown in the screenshot.
 
 ## TODO
 
