@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.13](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.12...v0.0.13) (2025-02-06)
+
+
+### Features
+
+* enable find widget on web ui ([dd7ea49](https://github.com/ashish10alex/vscode-ollama-chat/commit/dd7ea49112b580ffad4f5ad5162a2b4d338a0dad))
+* store history of prompts ([9745d53](https://github.com/ashish10alex/vscode-ollama-chat/commit/9745d53ca459224239a8fdfeda93d7fdcf4b8fa2))
+
 ### [0.0.12](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.11...v0.0.12) (2025-02-05)
 
 
