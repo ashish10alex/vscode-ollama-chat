@@ -32,6 +32,7 @@ export function activate(context: vscode.ExtensionContext) {
 				"Ollama chat window",
 				vscode.ViewColumn.One,
 				{
+					enableFindWidget: true,
 					enableScripts: true,
 					retainContextWhenHidden: true,
                     localResourceRoots: [
