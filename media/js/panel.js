@@ -4,6 +4,12 @@ const questionInput = document.getElementById('questionInput');
 const submitBtn = document.getElementById('submitBtn');
 const modelSelector = document.getElementById('modelSelector');
 const refreshBtn = document.getElementById('refreshBtn');
+const historyBtn = document.getElementById('historyBtn');
+const historyPanel = document.getElementById('historyPanel');
+const closeHistoryBtn = document.getElementById('closeHistoryBtn');
+const historyList = document.getElementById('historyList');
+const historyCount = document.getElementById('historyCount');
+const historySearch = document.getElementById('historySearch');
 
 let currentAssistantMessage = null;
 let autoScrollEnabled = true;  // flag to control auto-scroll
@@ -135,23 +141,113 @@ function showLoading() {
     }
 }
 
+function updateHistoryCount() {
+    const count = historyList.children.length;
+    historyCount.textContent = count.toString();
+}
+
+function filterHistory(searchText) {
+    const historyItems = Array.from(historyList.children);
+    const searchLower = searchText.toLowerCase();
+    
+    historyItems.forEach(item => {
+        const question = item.querySelector('p').textContent.toLowerCase();
+        if (question.includes(searchLower)) {
+            item.style.display = 'block';
+        } else {
+            item.style.display = 'none';
+        }
+    });
+}
+
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+historySearch.addEventListener('input', debounce((e) => {
+    filterHistory(e.target.value);
+}, 300));
+
+function addToHistory(question, timestamp = new Date().toLocaleTimeString(), answer = '', skipStorage = false) {
+    const historyItem = document.createElement('div');
+    historyItem.className = 'p-3 bg-[#2d2d2d] rounded-lg hover:bg-[#3c3c3c] cursor-pointer transition-colors group relative';
+    
+    historyItem.setAttribute('data-question', question);
+    
+    const truncatedQuestion = question.length > 60 
+        ? question.substring(0, 57) + '...' 
+        : question;
+
+    historyItem.innerHTML = `
+        <div class="flex justify-between items-start gap-2">
+            <p class="text-sm text-[#d4d4d4] group-hover:text-white transition-colors">${truncatedQuestion}</p>
+            <div class="flex items-center gap-2">
+                <span class="text-xs text-[#858585]">${timestamp}</span>
+                <button class="delete-history-item opacity-0 group-hover:opacity-100 transition-opacity p-1 hover:bg-[#ff4444] rounded">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-[#858585] hover:text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+        </div>
+    `;
+
+    // Add click event for delete button
+    const deleteBtn = historyItem.querySelector('.delete-history-item');
+    deleteBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        vscode.postMessage({
+            command: "deleteHistoryItem",
+            question: question,
+            timestamp: timestamp
+        });
+        historyItem.remove();
+        updateHistoryCount();
+    });
+
+    // Add click event for loading the chat
+    historyItem.addEventListener('click', () => {
+        clearChat();
+        addMessage(question, true);
+        if (answer) {
+            addMessage(answer, false);
+        }
+        questionInput.value = question;
+        questionInput.style.height = 'auto';
+        questionInput.style.height = questionInput.scrollHeight + 'px';
+        historyPanel.classList.remove('open');
+        questionInput.focus();
+    });
+
+    historyList.insertBefore(historyItem, historyList.firstChild);
+    updateHistoryCount();
+}
+
 async function sendMessage() {
     const question = questionInput.value.trim();
     if (!question) {
         return;
     }
 
+    // Add to history UI only (storage will happen after we get the response)
+    addToHistory(question, new Date().toLocaleTimeString(), '', true);
+
     submitBtn.disabled = true; 
     refreshBtn.disabled = true;
     
-    // Add the user's message.
     addMessage(question, true);
     questionInput.value = '';
     questionInput.style.height = 'auto';
     
-    // Start a new (hidden) assistant message block for the answer.
     startNewAssistantAnswer();
-    
     showLoading();
 
     vscode.postMessage({
@@ -204,8 +300,37 @@ function clearChat() {
 refreshBtn.addEventListener('click', clearChat);
 
 window.addEventListener('message', event => {
-    const { command, text, availableModels, selectedModel, messageStreamEnded} = event.data;
-    if (command === "chatResponse") {
+    const { command, text, availableModels, selectedModel, messageStreamEnded, history } = event.data;
+    
+    if (command === "loadHistory" && history) {
+        historyList.innerHTML = '';
+        history.forEach(item => {
+            addToHistory(item.question, item.timestamp, item.answer, true);
+        });
+        updateHistoryCount();
+    } else if (command === "updateHistoryAnswer") {
+        // Find and update the history item
+        const historyItems = Array.from(historyList.children);
+        const targetItem = historyItems.find(item => {
+            const itemQuestion = item.querySelector('p').textContent;
+            const itemTimestamp = item.querySelector('span').textContent;
+            return itemQuestion === command && itemTimestamp === text;
+        });
+        
+        if (targetItem) {
+            // Update the click handler with the new answer
+            targetItem.onclick = () => {
+                clearChat();
+                addMessage(command, true);
+                addMessage(text, false);
+                questionInput.value = command;
+                questionInput.style.height = 'auto';
+                questionInput.style.height = questionInput.scrollHeight + 'px';
+                historyPanel.classList.remove('open');
+                questionInput.focus();
+            };
+        }
+    } else if (command === "chatResponse") {
         updateLastAssistantMessage(text);
     } else if (command === "ollamaInstallErorr") {
         document.getElementById('ollamaError').classList.remove('hidden');
@@ -223,3 +348,20 @@ window.addEventListener('message', event => {
         populateModelSelector(availableModels, selectedModel);
     }
 });
+
+historyBtn.addEventListener('click', () => {
+    historyPanel.classList.add('open');
+});
+
+closeHistoryBtn.addEventListener('click', () => {
+    historyPanel.classList.remove('open');
+    historySearch.value = '';
+    filterHistory('');
+});
+
+function clearHistory() {
+    historyList.innerHTML = '';
+    updateHistoryCount();
+    historySearch.value = '';
+    vscode.postMessage({ command: "clearHistory" });
+}

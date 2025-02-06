@@ -4,6 +4,13 @@ import ollama from 'ollama';
 import { executableIsAvailable, getAvaialableModels, systemPromptContent } from './utils';
 import { getWebViewHtmlContent } from './chat';
 
+// Add interface for history item
+interface ChatHistoryItem {
+    question: string;
+    answer: string;
+    timestamp: string;
+}
+
 export function activate(context: vscode.ExtensionContext) {
 
 	const ollamaBinaryName = "ollama";
@@ -49,24 +56,62 @@ export function activate(context: vscode.ExtensionContext) {
 
 		panel.webview.postMessage({availableModels: availableModels, selectedModel: selectedModel});
 
+		// Load chat history when panel is created
+		const chatHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
+		
+		// Send initial history to webview
+		panel.webview.postMessage({
+			command: 'loadHistory',
+			history: chatHistory
+		});
+
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";
 			if(message.command === 'chat'){
+				const historyItem: ChatHistoryItem = {
+					question: message.question,
+					answer: '', // We'll update this after getting the full response
+					timestamp: new Date().toLocaleTimeString()
+				};
+				
+				const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
+				const updatedHistory = [historyItem, ...currentHistory].slice(0, 50);
+				
 				const systemPromt = { role: 'system', content: systemPromptContent};
 				const userPromt = { role: 'user', content: message.question};
-				const response = await ollama.chat(
-					{
-						model: selectedModel || "", //FIXME: we need to show an error instead. not have "" as deafult results in type error
-						messages: [systemPromt, userPromt],
-						stream: true,
-					}
-				);
+				const response = await ollama.chat({
+					model: selectedModel || "",
+					messages: [systemPromt, userPromt],
+					stream: true,
+				});
+
+				// Collect full response
 				for await (const part of response) {
 					responseText += part.message.content;
 					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels, selectedModel: selectedModel});
 				}
+
+				// Update history item with the complete answer
+				historyItem.answer = responseText;
+				await context.globalState.update('ollamaChatHistory', updatedHistory);
+				
+				// Send updated history item to update the UI
+				panel.webview.postMessage({
+					command: "updateHistoryAnswer",
+					question: message.question,
+					answer: responseText,
+					timestamp: historyItem.timestamp
+				});
+				
 				panel.webview.postMessage({messageStreamEnded: true});
-			} else if (message.command === "selectedModel"){
+			} else if (message.command === "deleteHistoryItem") {
+				// Handle deleting individual history item
+				const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
+				const updatedHistory = currentHistory.filter(item => 
+					!(item.question === message.question && item.timestamp === message.timestamp)
+				);
+				await context.globalState.update('ollamaChatHistory', updatedHistory);
+			} else if (message.command === "selectedModel") {
 				selectedModel = message.selectedModel;
 			}
 		});

@@ -23,6 +23,13 @@ return /*html*/ `
             border-top-color: rgb(37 99 235);
             animation: spin 1s linear infinite;
         }
+        .history-panel {
+            transform: translateX(-100%);
+            transition: transform 0.3s ease-in-out;
+        }
+        .history-panel.open {
+            transform: translateX(0);
+        }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
 </head>
@@ -34,6 +41,55 @@ return /*html*/ `
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/go.min.js"></script>
     <script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+
+    <!-- History Toggle Button -->
+    <button 
+        id="historyBtn" 
+        class="absolute top-4 left-4 flex items-center gap-2 px-3 py-2 bg-[#0066AD] text-white rounded-lg hover:bg-[#0077CC] transition-colors"
+        title="Show History"
+    >
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+        </svg>
+        <span class="text-sm font-medium">History</span>
+        <span id="historyCount" class="inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none bg-[#004d80] rounded-full ml-1">0</span>
+    </button>
+
+    <!-- History Panel -->
+    <div id="historyPanel" class="history-panel fixed left-0 top-0 h-full w-80 bg-[#252526] border-r border-[#404040] z-50">
+        <div class="p-4 border-b border-[#404040] flex justify-between items-center bg-[#2d2d2d]">
+            <div class="flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-[#0066AD]" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.415-1.415L11 9.586V6z" clip-rule="evenodd" />
+                </svg>
+                <h2 class="text-[#cccccc] text-lg font-semibold">Chat History</h2>
+            </div>
+            <button id="closeHistoryBtn" class="text-[#858585] hover:text-[#cccccc] transition-colors p-2 hover:bg-[#404040] rounded">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+        </div>
+        <!-- Add search input -->
+        <div class="p-4 border-b border-[#404040] bg-[#2d2d2d]">
+            <div class="relative">
+                <input 
+                    type="text" 
+                    id="historySearch" 
+                    class="w-full px-4 py-2 bg-[#3c3c3c] text-[#cccccc] rounded-lg border border-[#404040] 
+                           focus:outline-none focus:border-[#0e639c] focus:ring-1 focus:ring-[#0e639c] 
+                           placeholder-[#858585]"
+                    placeholder="Search history..."
+                />
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 absolute right-3 top-2.5 text-[#858585]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                </svg>
+            </div>
+        </div>
+        <div id="historyList" class="overflow-y-auto h-[calc(100%-124px)] p-4 space-y-3">
+            <!-- History items will be populated here -->
+        </div>
+    </div>
 
     <div class="flex-1 overflow-y-auto p-4 space-y-4" id="chatContainer">
         <!-- Header -->
