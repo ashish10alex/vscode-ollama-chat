@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.15](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.14...v0.0.15) (2025-02-12)
+
+
+### Features
+
+* add option to specify a default model ([c40eb64](https://github.com/ashish10alex/vscode-ollama-chat/commit/c40eb64ef4d012377bf09db7b2fcaed849f6aa09))
+
 ### [0.0.14](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.13...v0.0.14) (2025-02-12)
 
 
