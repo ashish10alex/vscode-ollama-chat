@@ -16,6 +16,7 @@ export function activate(context: vscode.ExtensionContext) {
 	const ollamaBinaryName = "ollama";
     globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
     globalThis.selectedModel = undefined;
+	globalThis.stopResponse = false;
 
 
 	executableIsAvailable(ollamaBinaryName);
@@ -68,10 +69,18 @@ export function activate(context: vscode.ExtensionContext) {
 
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";
-			if(message.command === 'chat'){
+			
+			if(message.command === 'chat' || message.command === 'stopResponse'){
+
+				if(message.command === 'chat'){
+					globalThis.stopResponse = false;
+				} else if(message.command === 'stopResponse'){
+					globalThis.stopResponse = true;
+				}
+				
 				const historyItem: ChatHistoryItem = {
 					question: message.question,
-					answer: '', // We'll update this after getting the full response
+					answer: '',
 					timestamp: new Date().toLocaleTimeString()
 				};
 				
@@ -80,31 +89,43 @@ export function activate(context: vscode.ExtensionContext) {
 				
 				const systemPromt = { role: 'system', content: systemPromptContent};
 				const userPromt = { role: 'user', content: message.question};
-				const response = await ollama.chat({
-					model: selectedModel || "",
-					messages: [systemPromt, userPromt],
-					stream: true,
-				});
+				
+				try {
+					const response = await ollama.chat({
+						model: selectedModel || "",
+						messages: [systemPromt, userPromt],
+						stream: true,
+					});
 
-				// Collect full response
-				for await (const part of response) {
-					responseText += part.message.content;
-					panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels, selectedModel: selectedModel});
+					// Collect full response
+					for await (const part of response) {
+						if(globalThis.stopResponse){
+							panel.webview.postMessage({messageStreamEnded: true});
+							return;
+						}
+						responseText += part.message.content;
+						panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels, selectedModel: selectedModel});
+					}
+
+					// Update history item with the complete answer
+					historyItem.answer = responseText;
+					await context.globalState.update('ollamaChatHistory', updatedHistory);
+					
+					panel.webview.postMessage({
+						command: "updateHistoryAnswer",
+						question: message.question,
+						answer: responseText,
+						timestamp: historyItem.timestamp
+					});
+					
+					panel.webview.postMessage({messageStreamEnded: true});
+				} catch (error: any) {
+					if (error.name === 'AbortError') {
+						panel.webview.postMessage({messageStreamEnded: true});
+					} else {
+						panel.webview.postMessage({command: "error", text: "An error occurred while processing your request"});
+					}
 				}
-
-				// Update history item with the complete answer
-				historyItem.answer = responseText;
-				await context.globalState.update('ollamaChatHistory', updatedHistory);
-				
-				// Send updated history item to update the UI
-				panel.webview.postMessage({
-					command: "updateHistoryAnswer",
-					question: message.question,
-					answer: responseText,
-					timestamp: historyItem.timestamp
-				});
-				
-				panel.webview.postMessage({messageStreamEnded: true});
 			} else if (message.command === "deleteHistoryItem") {
 				// Handle deleting individual history item
 				const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);

@@ -10,9 +10,12 @@ const closeHistoryBtn = document.getElementById('closeHistoryBtn');
 const historyList = document.getElementById('historyList');
 const historyCount = document.getElementById('historyCount');
 const historySearch = document.getElementById('historySearch');
+const sendIcon = document.getElementById('sendIcon');
+const stopIcon = document.getElementById('stopIcon');
 
 let currentAssistantMessage = null;
 let autoScrollEnabled = true;  // flag to control auto-scroll
+let isGenerating = false;
 
 function scrollToBottom() {
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -231,7 +234,29 @@ function addToHistory(question, timestamp = new Date().toLocaleTimeString(), ans
     updateHistoryCount();
 }
 
+function toggleGeneratingState(generating) {
+    isGenerating = generating;
+    if (generating) {
+        sendIcon.classList.add('hidden');
+        stopIcon.classList.remove('hidden');
+        submitBtn.classList.add('bg-red-600', 'hover:bg-red-700');
+        submitBtn.classList.remove('bg-[#0066AD]', 'hover:bg-[#004d80]');
+    } else {
+        sendIcon.classList.remove('hidden');
+        stopIcon.classList.add('hidden');
+        submitBtn.classList.remove('bg-red-600', 'hover:bg-red-700');
+        submitBtn.classList.add('bg-[#0066AD]', 'hover:bg-[#004d80]');
+    }
+}
+
 async function sendMessage() {
+
+    if (isGenerating) {
+        vscode.postMessage({ command: 'stopResponse' });
+        toggleGeneratingState(false);
+        return;
+    }
+
     const question = questionInput.value.trim();
     if (!question) {
         return;
@@ -240,7 +265,7 @@ async function sendMessage() {
     // Add to history UI only (storage will happen after we get the response)
     addToHistory(question, new Date().toLocaleTimeString(), '', true);
 
-    submitBtn.disabled = true; 
+    toggleGeneratingState(true);
     refreshBtn.disabled = true;
     
     addMessage(question, true);
@@ -343,6 +368,7 @@ window.addEventListener('message', event => {
     } else if (messageStreamEnded === true) {
         submitBtn.disabled = false;
         refreshBtn.disabled = false;
+        toggleGeneratingState(false);
     }
     if (availableModels && selectedModel) {
         populateModelSelector(availableModels, selectedModel);

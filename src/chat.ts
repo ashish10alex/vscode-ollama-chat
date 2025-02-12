@@ -147,7 +147,18 @@ return /*html*/ `
                 id="submitBtn"
                 class="h-fit px-4 py-2 bg-[#0066AD] text-[#cccccc] rounded hover:bg-[#004d80] focus:outline-none focus:ring-2 focus:ring-[#4d4d4d] border border-[#454545] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0066AD]"
             >
-                Send
+                <span id="sendIcon" class="flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
+                    </svg>
+                    Send
+                </span>
+                <span id="stopIcon" class="hidden flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8 7a1 1 0 00-1 1v4a1 1 0 001 1h4a1 1 0 001-1V8a1 1 0 00-1-1H8z" clip-rule="evenodd" />
+                    </svg>
+                    Stop
+                </span>
             </button>
         </div>
     </div>
