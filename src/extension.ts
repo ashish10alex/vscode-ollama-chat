@@ -11,6 +11,23 @@ interface ChatHistoryItem {
     timestamp: string;
 }
 
+async function preloadModel(model: string) {
+    const preloadMessages = [
+        { role: 'system', content: '' },
+        { role: 'user', content: '' }
+    ];
+    try {
+        await ollama.chat({
+            model: model,
+            messages: preloadMessages,
+            stream: false, // non-streaming call for preloading
+        });
+        vscode.window.showInformationMessage(`Preloaded model: ${model}`);
+    } catch (error) {
+        vscode.window.showErrorMessage(`Error preloading model: ${error}`);
+    }
+}
+
 export function activate(context: vscode.ExtensionContext) {
 
 	const ollamaBinaryName = "ollama";
@@ -47,6 +64,12 @@ export function activate(context: vscode.ExtensionContext) {
 		};
 
 		selectedModel = getDefaultModel(availableModels);
+
+        // Preload the model right after launching the panel
+        if (ollamaInstalled && globalThis.selectedModel) {
+            preloadModel(globalThis.selectedModel);
+        }
+
 		if (!selectedModel) {
 			panel.webview.postMessage({
 				command: "ollamaModelsNotDownloaded", 
