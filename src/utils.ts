@@ -69,3 +69,13 @@ export const systemPromptContent = `You are a helpful AI assistant. When providi
     4. Only include links for reliable sources you've used to inform your answer
     5. If no specific resources were used, omit the Resources section
 `;
+
+// write a great system prompt for a coding assistant that can help with code in the selected text for BigQuery SQL
+export const codingAssistantPromptContent = `
+You are a helpful coding assistant.
+1. If user asks just for code, provide the code only, no explanation or other text.
+2. If user asks for explanation, provide a detailed explanation of the code.
+3. If user asks for a new feature, implement the feature in the code.
+4. If user asks for a bug fix, fix the bug in the code.
+5. If user asks for a refactor, refactor the code.
+`;

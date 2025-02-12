@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
 import os from 'os';
 import ollama from 'ollama';
-import { executableIsAvailable, getAvaialableModels, getDefaultModel, systemPromptContent } from './utils';
+import { codingAssistantPromptContent, executableIsAvailable, getAvaialableModels, getDefaultModel, systemPromptContent } from './utils';
 import { getWebViewHtmlContent } from './chat';
+import MarkdownIt from 'markdown-it';
+import path from 'path';
 
 // Add interface for history item
 interface ChatHistoryItem {
@@ -11,21 +13,34 @@ interface ChatHistoryItem {
     timestamp: string;
 }
 
+// Add this interface near other interfaces
+interface CodeContext {
+    selectedText: string;
+    filePath: string;
+    language: string;
+    startLine: number;
+    endLine: number;
+}
+
 async function preloadModel(model: string) {
-    const preloadMessages = [
-        { role: 'system', content: '' },
-        { role: 'user', content: '' }
-    ];
     try {
-        await ollama.chat({
+        await ollama.generate({		
             model: model,
-            messages: preloadMessages,
-            stream: false, // non-streaming call for preloading
+            prompt: '',
         });
-        vscode.window.showInformationMessage(`Preloaded model: ${model}`);
     } catch (error) {
         vscode.window.showErrorMessage(`Error preloading model: ${error}`);
     }
+}
+
+// Add this function before the activate function
+async function showInputBox(codeContext: CodeContext): Promise<string | undefined> {
+    const filename = path.basename(codeContext.filePath);
+    const lineRange = `lines ${codeContext.startLine}-${codeContext.endLine}`;
+    return vscode.window.showInputBox({
+        prompt: `Ask about the selected code in ${filename} (${lineRange})`,
+        placeHolder: "E.g.: How can I improve this code?",
+    });
 }
 
 export function activate(context: vscode.ExtensionContext) {
@@ -65,7 +80,6 @@ export function activate(context: vscode.ExtensionContext) {
 
 		selectedModel = getDefaultModel(availableModels);
 
-        // Preload the model right after launching the panel
         if (ollamaInstalled && globalThis.selectedModel) {
             preloadModel(globalThis.selectedModel);
         }
@@ -170,7 +184,112 @@ export function activate(context: vscode.ExtensionContext) {
 
 		});
 
+    const askAboutSelection = vscode.commands.registerCommand('ollama-chat.askAboutSelection', async () => {
+        const editor = vscode.window.activeTextEditor;
+        if (!editor) {
+            vscode.window.showErrorMessage('No active editor');
+            return;
+        }
+
+        const selection = editor.selection;
+        const selectedText = editor.document.getText(selection);
+        
+        if (!selectedText) {
+            vscode.window.showErrorMessage('No text selected');
+            return;
+        }
+
+        const codeContext: CodeContext = {
+            selectedText,
+            filePath: editor.document.fileName,
+            language: editor.document.languageId,
+            startLine: selection.start.line + 1,
+            endLine: selection.end.line + 1
+        };
+
+        const userQuery = await showInputBox(codeContext);
+        if (!userQuery) {return;}
+
+        const contextPrompt = `I have the following code in a ${codeContext.language} file:
+
+\`\`\`${codeContext.language}
+${codeContext.selectedText}
+\`\`\`
+
+${userQuery}`;
+
+        try {
+            const systemPromt = { role: 'system', content: codingAssistantPromptContent };
+            const userPromt = { role: 'user', content: contextPrompt };
+            selectedModel = getDefaultModel(getAvaialableModels());
+
+            // Show progress indicator
+            vscode.window.withProgress({
+                location: vscode.ProgressLocation.Notification,
+                title: `Getting response from ${selectedModel}...`,
+                cancellable: true
+            }, async (progress, token) => {
+                let responseText = "";
+                
+                const response = await ollama.chat({
+                    model: selectedModel || "",
+                    messages: [systemPromt, userPromt],
+                    stream: true,
+                });
+
+                const panel = vscode.window.createWebviewPanel(
+                    'ollamaResponse',
+                    'Ollama Response',
+                    vscode.ViewColumn.Beside,
+                    {
+                        enableScripts: true
+                    }
+                );
+
+                const md = new MarkdownIt({
+                    html: true,
+                    highlight: function (str, lang) {
+                        return `<pre class="hljs"><code>${str}</code></pre>`;
+                    }
+                });
+
+                for await (const part of response) {
+                    if (token.isCancellationRequested) {
+                        break;
+                    }
+                    responseText += part.message.content;
+                    panel.webview.html = `
+                        <!DOCTYPE html>
+                        <html>
+                        <head>
+							<link rel="stylesheet" href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
+							<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+							<script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+							<script src="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.js"></script>
+                            <script>
+								hljs.highlightAll();
+								hljs.configure({ignoreUnescapedHTML: true});
+								hljs.addPlugin(new CopyButtonPlugin({ autohide: false }));
+							</script>
+                            <style>
+                                body { padding: 16px; }
+                                code { font-family: 'Consolas', 'Courier New', monospace; }
+                            </style>
+                        </head>
+                        <body>
+                            ${md.render(responseText)}
+                        </body>
+                        </html>
+                    `;
+                }
+            });
+        } catch (error: any) {
+            vscode.window.showErrorMessage(`Error: ${error.message}`);
+        }
+    });
+
     context.subscriptions.push(disposable);
+    context.subscriptions.push(askAboutSelection);
 }
 
 export function deactivate() { }

@@ -1,5 +1,6 @@
 import {  ExtensionContext, Uri, Webview} from "vscode";
 import { getNonce } from "./utils";
+import * as vscode from "vscode";
 
 export function getWebViewHtmlContent(context:ExtensionContext, webview: Webview ) {
 
