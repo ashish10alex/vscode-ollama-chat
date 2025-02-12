@@ -26,7 +26,13 @@
     ],
     "configuration": {
       "title": "Ollama Chat",
-      "properties": {}
+      "properties": {
+        "ollama-chat.defaultModel": {
+          "type": "string",
+          "default": "",
+          "description": "Default model to use for chat. If not specified, the first available model will be used."
+        }
+      }
     }
   },
   "scripts": {

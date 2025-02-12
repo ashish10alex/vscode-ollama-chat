@@ -362,7 +362,12 @@ window.addEventListener('message', event => {
         submitBtn.disabled = false;
         refreshBtn.disabled = false;
     } else if (command === "ollamaModelsNotDownloaded") {
-        document.getElementById('ollamaError').classList.remove('hidden');
+        const ollamaError = document.getElementById('ollamaError');
+        ollamaError.innerHTML = `
+            <p class="font-bold">Error: Model Not Available</p>
+            <p>The configured model is not available. Please download it first or choose a different model.</p>
+        `;
+        ollamaError.classList.remove('hidden');
         submitBtn.disabled = false;
         refreshBtn.disabled = false;
     } else if (messageStreamEnded === true) {

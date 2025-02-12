@@ -12,6 +12,19 @@ export function getNonce() {
     return text;
 }
 
+
+export function getDefaultModel(availableModels: string[]): string | undefined {
+    const config = vscode.workspace.getConfiguration('ollama-chat');
+    const configuredModel = config.get<string>('defaultModel');
+    
+    if (configuredModel && availableModels.includes(configuredModel)) {
+        return configuredModel;
+    }
+    
+    return availableModels.length >= 1 ? availableModels[0] : undefined;
+}
+
+
 export function executableIsAvailable(name: string) {
     const shell = (cmd: string) => execSync(cmd, { encoding: 'utf8' });
     const command = isRunningOnWindows ? "where.exe" : "which";

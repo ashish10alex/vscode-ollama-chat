@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import os from 'os';
 import ollama from 'ollama';
-import { executableIsAvailable, getAvaialableModels, systemPromptContent } from './utils';
+import { executableIsAvailable, getAvaialableModels, getDefaultModel, systemPromptContent } from './utils';
 import { getWebViewHtmlContent } from './chat';
 
 // Add interface for history item
@@ -17,7 +17,6 @@ export function activate(context: vscode.ExtensionContext) {
     globalThis.isRunningOnWindows = os.platform() === 'win32' ? true : false;
     globalThis.selectedModel = undefined;
 	globalThis.stopResponse = false;
-
 
 	executableIsAvailable(ollamaBinaryName);
 
@@ -47,13 +46,21 @@ export function activate(context: vscode.ExtensionContext) {
 			panel.webview.postMessage({command: "ollamaInstallErorr", text: "ollama not installed"});
 		};
 
-		if(!selectedModel){
-			if(availableModels.length >= 1){
-				selectedModel = availableModels[0];
-			} else {
-				panel.webview.postMessage({command: "ollamaModelsNotDownloaded", text: "Models not downloded"});
-				return;
-			}
+		selectedModel = getDefaultModel(availableModels);
+		if (!selectedModel) {
+			panel.webview.postMessage({
+				command: "ollamaModelsNotDownloaded", 
+				text: "No models available. Please download a model first."
+			});
+			return;
+		}
+
+		if (selectedModel && !availableModels.includes(selectedModel)) {
+			panel.webview.postMessage({
+				command: "ollamaModelsNotDownloaded",
+				text: `The configured model '${selectedModel}' is not available. Please download it first or choose a different model.`
+			});
+			selectedModel = availableModels.length > 0 ? availableModels[0] : undefined;
 		}
 
 		panel.webview.postMessage({availableModels: availableModels, selectedModel: selectedModel});
