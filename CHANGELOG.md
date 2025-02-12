@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.14](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.13...v0.0.14) (2025-02-12)
+
+
+### Features
+
+* add ability to stop streaming response ([08d47f0](https://github.com/ashish10alex/vscode-ollama-chat/commit/08d47f0896d7a4c7036e080dd41ee0135a99f39e))
+* improve new chat button ui ([7a54a34](https://github.com/ashish10alex/vscode-ollama-chat/commit/7a54a34415579265b3e68fab01ec165687ca57b9))
+
 ### [0.0.13](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.12...v0.0.13) (2025-02-06)
 
 
