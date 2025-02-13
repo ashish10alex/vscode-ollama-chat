@@ -16,6 +16,7 @@ interface ChatHistoryItem {
 // Add this interface near other interfaces
 interface CodeContext {
     selectedText: string;
+    fullFileContent: string;
     filePath: string;
     language: string;
     startLine: number;
@@ -193,6 +194,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const selection = editor.selection;
         const selectedText = editor.document.getText(selection);
+        const fullFileContent = editor.document.getText();
         
         if (!selectedText) {
             vscode.window.showErrorMessage('No text selected');
@@ -201,6 +203,7 @@ export function activate(context: vscode.ExtensionContext) {
 
         const codeContext: CodeContext = {
             selectedText,
+            fullFileContent,
             filePath: editor.document.fileName,
             language: editor.document.languageId,
             startLine: selection.start.line + 1,
@@ -210,8 +213,14 @@ export function activate(context: vscode.ExtensionContext) {
         const userQuery = await showInputBox(codeContext);
         if (!userQuery) {return;}
 
-        const contextPrompt = `I have the following code in a ${codeContext.language} file:
+        const contextPrompt = `I have the following ${codeContext.language} file, where lines ${codeContext.startLine}-${codeContext.endLine} are specifically selected:
 
+Full file content:
+\`\`\`${codeContext.language}
+${codeContext.fullFileContent}
+\`\`\`
+
+The selected portion (lines ${codeContext.startLine}-${codeContext.endLine}):
 \`\`\`${codeContext.language}
 ${codeContext.selectedText}
 \`\`\`
