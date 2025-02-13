@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.18](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.17...v0.0.18) (2025-02-13)
+
+
+### Bug Fixes
+
+* will not able to check for available models when running remotely ([eb61d68](https://github.com/ashish10alex/vscode-ollama-chat/commit/eb61d68cbf579970466d98f5930ce7c9c48d2624))
+
 ### [0.0.17](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.16...v0.0.17) (2025-02-13)
 
 
