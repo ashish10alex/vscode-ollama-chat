@@ -31,6 +31,11 @@
           "type": "string",
           "default": "",
           "description": "Default model to use for chat. If not specified, the first available model will be used."
+        },
+        "ollama-chat.serverUrl": {
+          "type": "string",
+          "default": "http://localhost:11434",
+          "description": "URL of the Ollama server. Use this to connect to a remote Ollama instance (e.g., http://192.168.1.100:11434)"
         }
       }
     }

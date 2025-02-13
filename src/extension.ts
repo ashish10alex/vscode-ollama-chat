@@ -3,6 +3,7 @@ import os from 'os';
 import ollama from 'ollama';
 import { executableIsAvailable, getAvaialableModels, getDefaultModel, systemPromptContent } from './utils';
 import { getWebViewHtmlContent } from './chat';
+import { Ollama } from 'ollama';
 
 // Add interface for history item
 interface ChatHistoryItem {
@@ -17,10 +18,17 @@ async function preloadModel(model: string) {
         { role: 'user', content: '' }
     ];
     try {
-        await ollama.chat({
+        const config = vscode.workspace.getConfiguration('ollama-chat');
+        const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
+        
+        const ollamaInstance = new Ollama({
+            host: serverUrl
+        });
+
+        await ollamaInstance.chat({
             model: model,
             messages: preloadMessages,
-            stream: false, // non-streaming call for preloading
+            stream: false,
         });
         vscode.window.showInformationMessage(`Preloaded model: ${model}`);
     } catch (error) {
@@ -36,6 +44,13 @@ export function activate(context: vscode.ExtensionContext) {
 	globalThis.stopResponse = false;
 
 	executableIsAvailable(ollamaBinaryName);
+
+    const config = vscode.workspace.getConfiguration('ollama-chat');
+    const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
+    
+    const ollamaInstance = new Ollama({
+        host: serverUrl
+    });
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
 
@@ -121,7 +136,7 @@ export function activate(context: vscode.ExtensionContext) {
 				const userPromt = { role: 'user', content: message.question};
 				
 				try {
-					const response = await ollama.chat({
+					const response = await ollamaInstance.chat({
 						model: selectedModel || "",
 						messages: [systemPromt, userPromt],
 						stream: true,
