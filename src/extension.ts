@@ -85,6 +85,10 @@ export function activate(context: vscode.ExtensionContext) {
 
 		selectedModel = getDefaultModel(availableModels);
 
+		if(serverUrl !== 'http://localhost:11434'){
+			availableModels = [selectedModel!];
+		}
+
         // Preload the model right after launching the panel
         if (ollamaInstalled && globalThis.selectedModel) {
             preloadModel(globalThis.selectedModel);
@@ -96,14 +100,6 @@ export function activate(context: vscode.ExtensionContext) {
 				text: "No models available. Please download a model first."
 			});
 			return;
-		}
-
-		if (selectedModel && !availableModels.includes(selectedModel)) {
-			panel.webview.postMessage({
-				command: "ollamaModelsNotDownloaded",
-				text: `The configured model '${selectedModel}' is not available. Please download it first or choose a different model.`
-			});
-			selectedModel = availableModels.length > 0 ? availableModels[0] : undefined;
 		}
 
 		panel.webview.postMessage({availableModels: availableModels, selectedModel: selectedModel});

@@ -18,7 +18,7 @@ export function getDefaultModel(availableModels: string[]): string | undefined {
     const configuredModel = config.get<string>('defaultModel');
 
     const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
-    if(serverUrl === 'http://localhost:11434'){
+    if(serverUrl !== 'http://localhost:11434'){
         return configuredModel;
     }
 
