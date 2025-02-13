@@ -19,7 +19,7 @@ async function preloadModel(model: string) {
     try {
         const config = vscode.workspace.getConfiguration('ollama-chat');
         const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
-        
+
         const ollamaInstance = new Ollama({
             host: serverUrl
         });
@@ -49,7 +49,7 @@ export function activate(context: vscode.ExtensionContext) {
 	if(serverUrl === 'http://localhost:11434'){
 		executableIsAvailable(ollamaBinaryName);
 	}
-    
+
     const ollamaInstance = new Ollama({
         host: serverUrl
     });
@@ -58,13 +58,11 @@ export function activate(context: vscode.ExtensionContext) {
 
 		//TODO: all these could be done in parallel
 		let ollamaInstalled = true;
+        let availableModels:string[] = [];
 		if(serverUrl === 'http://localhost:11434'){
 			ollamaInstalled = executableIsAvailable(ollamaBinaryName);
+            availableModels = getAvaialableModels();
 		}
-
-
-		const availableModels = getAvaialableModels();
-
 
 		const panel = vscode.window.createWebviewPanel(
 				"Ollama chat",
@@ -94,7 +92,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		if (!selectedModel) {
 			panel.webview.postMessage({
-				command: "ollamaModelsNotDownloaded", 
+				command: "ollamaModelsNotDownloaded",
 				text: "No models available. Please download a model first."
 			});
 			return;
@@ -112,7 +110,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Load chat history when panel is created
 		const chatHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
-		
+
 		// Send initial history to webview
 		panel.webview.postMessage({
 			command: 'loadHistory',
@@ -121,7 +119,7 @@ export function activate(context: vscode.ExtensionContext) {
 
 		panel.webview.onDidReceiveMessage(async(message: any) => {
 			let responseText = "";
-			
+
 			if(message.command === 'chat' || message.command === 'stopResponse'){
 
 				if(message.command === 'chat'){
@@ -129,19 +127,19 @@ export function activate(context: vscode.ExtensionContext) {
 				} else if(message.command === 'stopResponse'){
 					globalThis.stopResponse = true;
 				}
-				
+
 				const historyItem: ChatHistoryItem = {
 					question: message.question,
 					answer: '',
 					timestamp: new Date().toLocaleTimeString()
 				};
-				
+
 				const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
 				const updatedHistory = [historyItem, ...currentHistory].slice(0, 50);
-				
+
 				const systemPromt = { role: 'system', content: systemPromptContent};
 				const userPromt = { role: 'user', content: message.question};
-				
+
 				try {
 					const response = await ollamaInstance.chat({
 						model: selectedModel || "",
@@ -162,14 +160,14 @@ export function activate(context: vscode.ExtensionContext) {
 					// Update history item with the complete answer
 					historyItem.answer = responseText;
 					await context.globalState.update('ollamaChatHistory', updatedHistory);
-					
+
 					panel.webview.postMessage({
 						command: "updateHistoryAnswer",
 						question: message.question,
 						answer: responseText,
 						timestamp: historyItem.timestamp
 					});
-					
+
 					panel.webview.postMessage({messageStreamEnded: true});
 				} catch (error: any) {
 					if (error.name === 'AbortError') {
@@ -181,7 +179,7 @@ export function activate(context: vscode.ExtensionContext) {
 			} else if (message.command === "deleteHistoryItem") {
 				// Handle deleting individual history item
 				const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
-				const updatedHistory = currentHistory.filter(item => 
+				const updatedHistory = currentHistory.filter(item =>
 					!(item.question === message.question && item.timestamp === message.timestamp)
 				);
 				await context.globalState.update('ollamaChatHistory', updatedHistory);

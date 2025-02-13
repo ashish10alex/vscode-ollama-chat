@@ -16,11 +16,16 @@ export function getNonce() {
 export function getDefaultModel(availableModels: string[]): string | undefined {
     const config = vscode.workspace.getConfiguration('ollama-chat');
     const configuredModel = config.get<string>('defaultModel');
-    
+
+    const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
+    if(serverUrl === 'http://localhost:11434'){
+        return configuredModel;
+    }
+
     if (configuredModel && availableModels.includes(configuredModel)) {
         return configuredModel;
     }
-    
+
     return availableModels.length >= 1 ? availableModels[0] : undefined;
 }
 
@@ -41,7 +46,7 @@ export function executableIsAvailable(name: string) {
 
 /**
  * Parsses output of `ollama list` command to extract available model names.
- * 
+ *
  * @function getAvaialableModels
  * @description Processes the tabular output from `ollama list` command, skipping headers and empty lines,
  *              to return an array of available model names.
