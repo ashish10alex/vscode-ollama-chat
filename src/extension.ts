@@ -1,6 +1,5 @@
 import * as vscode from 'vscode';
 import os from 'os';
-import ollama from 'ollama';
 import { executableIsAvailable, getAvaialableModels, getDefaultModel, systemPromptContent } from './utils';
 import { getWebViewHtmlContent } from './chat';
 import { Ollama } from 'ollama';
@@ -43,10 +42,13 @@ export function activate(context: vscode.ExtensionContext) {
     globalThis.selectedModel = undefined;
 	globalThis.stopResponse = false;
 
-	executableIsAvailable(ollamaBinaryName);
 
     const config = vscode.workspace.getConfiguration('ollama-chat');
     const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
+
+	if(serverUrl === 'http://localhost:11434'){
+		executableIsAvailable(ollamaBinaryName);
+	}
     
     const ollamaInstance = new Ollama({
         host: serverUrl
@@ -55,7 +57,12 @@ export function activate(context: vscode.ExtensionContext) {
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
 
 		//TODO: all these could be done in parallel
-		const ollamaInstalled = executableIsAvailable(ollamaBinaryName);
+		let ollamaInstalled = true;
+		if(serverUrl === 'http://localhost:11434'){
+			ollamaInstalled = executableIsAvailable(ollamaBinaryName);
+		}
+
+
 		const availableModels = getAvaialableModels();
 
 
