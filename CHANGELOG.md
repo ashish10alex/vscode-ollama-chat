@@ -2,6 +2,15 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.16](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.15...v0.0.16) (2025-02-13)
+
+
+### Features
+
+* add option to specify remote url ([2647320](https://github.com/ashish10alex/vscode-ollama-chat/commit/2647320e95781fa47e241546f9136809667a2ee5))
+* move new chat button slightly to the left ([06dd8c2](https://github.com/ashish10alex/vscode-ollama-chat/commit/06dd8c2f6ac700a1ff7c09a71d81389ad324d2b8))
+* preload model with dummy query on web panel load ([c1c5bc6](https://github.com/ashish10alex/vscode-ollama-chat/commit/c1c5bc68c5a8677a4d5916bdbf31b2f2811bc302))
+
 ### [0.0.15](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.14...v0.0.15) (2025-02-12)
 
 
