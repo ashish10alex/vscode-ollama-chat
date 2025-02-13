@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.17](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.16...v0.0.17) (2025-02-13)
+
+
+### Features
+
+* only check for binary if url is localhost ([4a25bce](https://github.com/ashish10alex/vscode-ollama-chat/commit/4a25bcef60e0836c7751d7c5575005e05a258e32))
+
 ### [0.0.16](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.15...v0.0.16) (2025-02-13)
 
 
