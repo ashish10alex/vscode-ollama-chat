@@ -4,6 +4,12 @@ VS Code extension that allows you to chat with self hosted models offline that c
 
 <img src="./.docs/ollama-chat.gif" alt="ollam-chat-demo" width="80%">
 
+## Features
+
+- [x] Chat with a model
+- [x] Chat with a selection
+- [ ] Add file as context to the chat
+
 ## How to use ?
 
 1. Install [Ollama](https://ollama.com/download) and download a model.
@@ -17,7 +23,6 @@ VS Code extension that allows you to chat with self hosted models offline that c
 
 ## TODO
 
-* [ ] feat: chat with a file or a selection
 * [ ] feat:  show error if user does not have ollama started either manually via opening the app or using `ollama serve`
 * [ ] feat:  show error if user does not have a model. Show them example command to install model
 * [ ] feat:  restrict user to certain number of tokens when sending message ?
