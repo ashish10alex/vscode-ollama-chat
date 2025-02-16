@@ -223,10 +223,6 @@ function addToHistory(question, timestamp = new Date().toLocaleTimeString(), ans
         if (answer) {
             addMessage(answer, false);
         }
-        questionInput.value = question;
-        questionInput.style.height = 'auto';
-        questionInput.style.height = questionInput.scrollHeight + 'px';
-        historyPanel.classList.remove('open');
         questionInput.focus();
     });
 
@@ -351,10 +347,6 @@ window.addEventListener('message', event => {
                 clearChat();
                 addMessage(command, true);
                 addMessage(text, false);
-                questionInput.value = command;
-                questionInput.style.height = 'auto';
-                questionInput.style.height = questionInput.scrollHeight + 'px';
-                historyPanel.classList.remove('open');
                 questionInput.focus();
             };
         }
