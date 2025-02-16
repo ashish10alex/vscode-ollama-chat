@@ -24,12 +24,11 @@ async function preloadModel(model: string) {
             host: serverUrl
         });
 
-        await ollamaInstance.chat({
+        await ollamaInstance.generate({
             model: model,
-            messages: preloadMessages,
+            prompt: "",
             stream: false,
         });
-        vscode.window.showInformationMessage(`Preloaded model: ${model}`);
     } catch (error) {
         vscode.window.showErrorMessage(`Error preloading model: ${error}`);
     }
