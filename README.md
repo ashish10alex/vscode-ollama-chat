@@ -17,10 +17,9 @@ VS Code extension that allows you to chat with self hosted models offline that c
 
 ## TODO
 
-* [ ] feat:  obtain avaialble models via api call instead of shell command
+* [ ] feat: chat with a file or a selection
 * [ ] feat:  show error if user does not have ollama started either manually via opening the app or using `ollama serve`
 * [ ] feat:  show error if user does not have a model. Show them example command to install model
-* [ ] feat:  retain context when conversation
 * [ ] feat:  restrict user to certain number of tokens when sending message ?
 * [ ] feat:  processes pdfs ?
 * [ ] feat:  audio search
