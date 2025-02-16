@@ -22,6 +22,10 @@
       {
         "command": "ollama-chat.ollamaChat",
         "title": "Ollama Chat"
+      },
+      {
+        "command": "ollama-chat.askSelected",
+        "title": "Ollama Chat: Ask About Selection"
       }
     ],
     "configuration": {

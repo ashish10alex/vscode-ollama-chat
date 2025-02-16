@@ -328,7 +328,7 @@ function clearChat() {
 refreshBtn.addEventListener('click', clearChat);
 
 window.addEventListener('message', event => {
-    const { command, text, availableModels, selectedModel, messageStreamEnded, history } = event.data;
+    const { command, text, availableModels, selectedModel, messageStreamEnded, history, question } = event.data;
     
     if (command === "loadHistory" && history) {
         historyList.innerHTML = '';
@@ -377,6 +377,10 @@ window.addEventListener('message', event => {
         submitBtn.disabled = false;
         refreshBtn.disabled = false;
         toggleGeneratingState(false);
+    } else if (command === "initialQuestion" && question) {
+        questionInput.value = question;
+        questionInput.style.height = 'auto';
+        questionInput.style.height = questionInput.scrollHeight + 'px';
     }
     if (availableModels && selectedModel) {
         populateModelSelector(availableModels, selectedModel);
