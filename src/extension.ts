@@ -4,18 +4,21 @@ import { executableIsAvailable, getDefaultModel, systemPromptContent } from './u
 import { getWebViewHtmlContent } from './chat';
 import { ModelResponse, Ollama } from 'ollama';
 
-// Add interface for history item
+// Add interface for message
+interface ChatMessage {
+    role: 'system' | 'user' | 'assistant';
+    content: string;
+}
+
+// Update ChatHistoryItem to include messages
 interface ChatHistoryItem {
     question: string;
     answer: string;
     timestamp: string;
+    messages?: ChatMessage[]; // Add this to store conversation context
 }
 
 async function preloadModel(model: string) {
-    const preloadMessages = [
-        { role: 'system', content: '' },
-        { role: 'user', content: '' }
-    ];
     try {
         const config = vscode.workspace.getConfiguration('ollama-chat');
         const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
@@ -57,6 +60,8 @@ export function activate(context: vscode.ExtensionContext) {
     const ollamaInstance = new Ollama({
         host: serverUrl
     });
+
+    let currentConversation: ChatMessage[] = [];
 
     const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', async () => {
 
@@ -132,19 +137,31 @@ export function activate(context: vscode.ExtensionContext) {
 				const historyItem: ChatHistoryItem = {
 					question: message.question,
 					answer: '',
-					timestamp: new Date().toLocaleTimeString()
+					timestamp: new Date().toLocaleTimeString(),
+					messages: [...currentConversation] // Store conversation context
 				};
 
 				const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
 				const updatedHistory = [historyItem, ...currentHistory].slice(0, 50);
 
-				const systemPromt = { role: 'system', content: systemPromptContent};
-				const userPromt = { role: 'user', content: message.question};
+				// Add system prompt only if conversation is empty
+				if (currentConversation.length === 0) {
+					currentConversation.push({ 
+						role: 'system', 
+						content: systemPromptContent 
+					});
+				}
+
+				// Add user message to conversation
+				currentConversation.push({
+					role: 'user',
+					content: message.question
+				});
 
 				try {
 					const response = await ollamaInstance.chat({
 						model: selectedModel || "",
-						messages: [systemPromt, userPromt],
+						messages: currentConversation,
 						stream: true,
 					});
 
@@ -155,11 +172,23 @@ export function activate(context: vscode.ExtensionContext) {
 							return;
 						}
 						responseText += part.message.content;
-						panel.webview.postMessage({command: "chatResponse", text: responseText, availableModels: availableModels, selectedModel: selectedModel});
+						panel.webview.postMessage({
+							command: "chatResponse", 
+							text: responseText, 
+							availableModels: availableModels, 
+							selectedModel: selectedModel
+						});
 					}
+
+					// Add assistant response to conversation
+					currentConversation.push({
+						role: 'assistant',
+						content: responseText
+					});
 
 					// Update history item with the complete answer
 					historyItem.answer = responseText;
+					historyItem.messages = [...currentConversation];
 					await context.globalState.update('ollamaChatHistory', updatedHistory);
 
 					panel.webview.postMessage({
@@ -174,7 +203,10 @@ export function activate(context: vscode.ExtensionContext) {
 					if (error.name === 'AbortError') {
 						panel.webview.postMessage({messageStreamEnded: true});
 					} else {
-						panel.webview.postMessage({command: "error", text: "An error occurred while processing your request"});
+						panel.webview.postMessage({
+							command: "error", 
+							text: "An error occurred while processing your request"
+						});
 					}
 				}
 			} else if (message.command === "deleteHistoryItem") {
@@ -186,6 +218,8 @@ export function activate(context: vscode.ExtensionContext) {
 				await context.globalState.update('ollamaChatHistory', updatedHistory);
 			} else if (message.command === "selectedModel") {
 				selectedModel = message.selectedModel;
+			} else if (message.command === "newChat") {
+				currentConversation = [];
 			}
 		});
 

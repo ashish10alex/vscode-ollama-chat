@@ -320,6 +320,9 @@ function clearChat() {
 
     currentAssistantMessage = null;
     questionInput.focus();
+
+    // Notify extension to clear conversation
+    vscode.postMessage({ command: "newChat" });
 }
 
 refreshBtn.addEventListener('click', clearChat);
