@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.22](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.21...v0.0.22) (2025-02-16)
+
+
+### Features
+
+* maintain history of conversation ([faf1857](https://github.com/ashish10alex/vscode-ollama-chat/commit/faf185793b61d4bf5036935d1449121fd5ccd06f))
+
 ### [0.0.21](https://github.com/ashish10alex/vscode-ollama-chat/compare/v0.0.20...v0.0.21) (2025-02-16)
 
 
