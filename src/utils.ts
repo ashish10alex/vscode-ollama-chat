@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { execSync } from 'child_process';
+import { ModelResponse } from 'ollama';
 
 
 export function getNonce() {
@@ -16,11 +17,6 @@ export function getNonce() {
 export function getDefaultModel(availableModels: string[]): string | undefined {
     const config = vscode.workspace.getConfiguration('ollama-chat');
     const configuredModel = config.get<string>('defaultModel');
-
-    const serverUrl = config.get<string>('serverUrl') || 'http://localhost:11434';
-    if(serverUrl !== 'http://localhost:11434'){
-        return configuredModel;
-    }
 
     if (configuredModel && availableModels.includes(configuredModel)) {
         return configuredModel;
@@ -43,29 +39,6 @@ export function executableIsAvailable(name: string) {
     return false;
     }
 }
-
-/**
- * Parsses output of `ollama list` command to extract available model names.
- *
- * @function getAvaialableModels
- * @description Processes the tabular output from `ollama list` command, skipping headers and empty lines,
- *              to return an array of available model names.
- * @returns {string[]} Array of model names in 'NAME:VERSION' format
- * @example
- * // Returns: ['qwen2.5-coder:latest', 'deepseek-r1:8b', 'deepseek-r1:1.5b']
- * getAvaialableModels();
- */
-export function getAvaialableModels() {
-    let modelsData = execSync('ollama list').toString();
-    return modelsData.split('\n')
-        .slice(1) // Remove header row containing columns
-        .filter(line => line.trim()) // Remove empty lines
-        .map(line => {
-            const columns = line.trim().split(/\s{2,}/); // Split by 2+ spaces
-            return columns[0]; // First column contains model name
-        });
-}
-
 
 export const systemPromptContent = `You are a helpful AI assistant. When providing information:
     1. Ensure your response is clear, concise, and directly addresses the user's query

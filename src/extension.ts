@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
 import os from 'os';
-import { executableIsAvailable, getAvaialableModels, getDefaultModel, systemPromptContent } from './utils';
+import { executableIsAvailable, getDefaultModel, systemPromptContent } from './utils';
 import { getWebViewHtmlContent } from './chat';
-import { Ollama } from 'ollama';
+import { ModelResponse, Ollama } from 'ollama';
 
 // Add interface for history item
 interface ChatHistoryItem {
@@ -35,6 +35,11 @@ async function preloadModel(model: string) {
     }
 }
 
+async function getAvaialableModels(ollamaInstance:Ollama): Promise<ModelResponse[]>{
+    const availableModels = await ollamaInstance.list();
+    return availableModels.models;
+}
+
 export function activate(context: vscode.ExtensionContext) {
 
 	const ollamaBinaryName = "ollama";
@@ -54,15 +59,19 @@ export function activate(context: vscode.ExtensionContext) {
         host: serverUrl
     });
 
-    const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', () => {
+    const disposable = vscode.commands.registerCommand('ollama-chat.ollamaChat', async () => {
 
 		//TODO: all these could be done in parallel
 		let ollamaInstalled = true;
+        let availableModelsMeta:ModelResponse[] = [];
         let availableModels:string[] = [];
+
 		if(serverUrl === 'http://localhost:11434'){
+            // only check if ollama cli is installed if running locally
 			ollamaInstalled = executableIsAvailable(ollamaBinaryName);
-            availableModels = getAvaialableModels();
 		}
+
+        availableModelsMeta = await getAvaialableModels(ollamaInstance);
 
 		const panel = vscode.window.createWebviewPanel(
 				"Ollama chat",
@@ -83,11 +92,8 @@ export function activate(context: vscode.ExtensionContext) {
 			panel.webview.postMessage({command: "ollamaInstallErorr", text: "ollama not installed"});
 		};
 
+        availableModels = availableModelsMeta.map((model) => model.name);
 		selectedModel = getDefaultModel(availableModels);
-
-		if(serverUrl !== 'http://localhost:11434'){
-			availableModels = [selectedModel!];
-		}
 
         // Preload the model right after launching the panel
         if (ollamaInstalled && globalThis.selectedModel) {
