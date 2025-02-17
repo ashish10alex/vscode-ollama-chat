@@ -16,6 +16,9 @@ export default defineConfig({
     sourcemap: true,
     watch: {}
   },
+  css: {
+    postcss: './postcss.config.js'
+  },
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './webview')
