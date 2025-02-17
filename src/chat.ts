@@ -38,6 +38,35 @@ return /*html*/ `
             padding: 1rem;
             border-bottom: 1px solid #404040;
         }
+        .file-dropdown {
+            position: absolute;
+            bottom: 100%;
+            left: 0;
+            width: 300px;
+            max-height: 400px;
+            margin-bottom: 0.5rem;
+            background-color: #2d2d2d;
+            border: 1px solid #404040;
+            border-radius: 0.5rem;
+            box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+            z-index: 50;
+        }
+        .file-list {
+            max-height: 300px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #404040 #2d2d2d;
+        }
+        .file-list::-webkit-scrollbar {
+            width: 8px;
+        }
+        .file-list::-webkit-scrollbar-track {
+            background: #2d2d2d;
+        }
+        .file-list::-webkit-scrollbar-thumb {
+            background-color: #404040;
+            border-radius: 4px;
+        }
     </style>
     <link rel="stylesheet" href="https://unpkg.com/highlightjs-copy/dist/highlightjs-copy.min.css" />
 </head>
@@ -146,7 +175,41 @@ return /*html*/ `
 
     <!-- Input Area -->
     <div class="border-t border-[#252526] p-4 bg-[#1e1e1e]">
-        <div class="flex gap-2">
+        <div class="flex gap-2 items-end">
+            <!-- New Add Files Button with dropdown container -->
+            <div class="relative">
+                <button
+                    id="addFileBtn"
+                    title="Add Files"
+                    class="flex items-center gap-2 px-3 py-2 bg-[#0066AD] text-white rounded-lg hover:bg-[#0077CC] transition-colors"
+                >
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                    </svg>
+                    <span class="hidden sm:inline">Add Files</span>
+                </button>
+                <!-- Dropdown container for file selection -->
+                <div id="fileDropdown" class="file-dropdown hidden">
+                    <!-- Search bar -->
+                    <div class="p-2 border-b border-[#404040] bg-[#333333]">
+                        <input 
+                            type="text" 
+                            id="fileSearch" 
+                            class="w-full px-3 py-1.5 bg-[#1e1e1e] text-[#cccccc] rounded border border-[#404040] text-sm focus:outline-none focus:border-[#0e639c] focus:ring-1 focus:ring-[#0e639c]" 
+                            placeholder="Search files..."
+                        />
+                    </div>
+                    <div id="fileList" class="file-list"></div>
+                    <div class="p-2 border-t border-[#404040] bg-[#333333] flex justify-between items-center">
+                        <span id="fileCount" class="text-xs text-[#858585]">0 files</span>
+                        <button id="confirmFileSelection" class="px-3 py-1 bg-[#0066AD] text-white rounded hover:bg-[#0077CC] text-sm">
+                            Confirm
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Existing textarea -->
             <textarea
                 id="questionInput"
                 class="w-full p-2 bg-[#3c3c3c] text-[#cccccc] rounded border border-[#3c3c3c]
@@ -156,6 +219,7 @@ return /*html*/ `
                 placeholder="Type your question here..."
                 rows="1"
             ></textarea>
+            <!-- Existing submit button -->
             <button
                 id="submitBtn"
                 class="h-fit px-4 py-2 bg-[#0066AD] text-[#cccccc] rounded hover:bg-[#004d80] focus:outline-none focus:ring-2 focus:ring-[#4d4d4d] border border-[#454545] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-[#0066AD]"

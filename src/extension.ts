@@ -111,6 +111,26 @@ function createChatPanel(context: vscode.ExtensionContext, initialQuestion?: str
         let responseText = "";
 
         if (message.command === 'chat' || message.command === 'stopResponse') {
+            if (message.command === 'chat' && message.files && message.files.length > 0) {
+                let combinedFilesContent = "";
+                for (const filePath of message.files) {
+                    try {
+                        const fileUri = vscode.Uri.file(filePath);
+                        const fileBytes = await vscode.workspace.fs.readFile(fileUri);
+                        const fileContent = Buffer.from(fileBytes).toString('utf8');
+                        combinedFilesContent += `From file ${filePath}:\n${fileContent}\n\n`;
+                    } catch (error) {
+                        console.error(`Failed to read file ${filePath}:`, error);
+                    }
+                }
+                if (combinedFilesContent) {
+                    currentConversation.push({
+                        role: 'system',
+                        content: `Additional file context:\n${combinedFilesContent}`,
+                    });
+                }
+            }
+
             if(message.command === 'chat'){
                 globalThis.stopResponse = false;
             } else if(message.command === 'stopResponse'){
@@ -124,10 +144,6 @@ function createChatPanel(context: vscode.ExtensionContext, initialQuestion?: str
                 messages: [...currentConversation]
             };
 
-            const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
-            const updatedHistory = [historyItem, ...currentHistory].slice(0, 50);
-
-            // Add system prompt only if conversation is empty
             if (currentConversation.length === 0) {
                 currentConversation.push({ 
                     role: 'system', 
@@ -147,7 +163,6 @@ function createChatPanel(context: vscode.ExtensionContext, initialQuestion?: str
                     stream: true,
                 });
 
-                // Collect full response
                 for await (const part of response) {
                     if(globalThis.stopResponse){
                         panel.webview.postMessage({messageStreamEnded: true});
@@ -161,16 +176,14 @@ function createChatPanel(context: vscode.ExtensionContext, initialQuestion?: str
                     });
                 }
 
-                // Add assistant response to conversation
                 currentConversation.push({
                     role: 'assistant',
                     content: responseText
                 });
 
-                // Update history item with the complete answer
                 historyItem.answer = responseText;
                 historyItem.messages = [...currentConversation];
-                await context.globalState.update('ollamaChatHistory', updatedHistory);
+                await context.globalState.update('ollamaChatHistory', [historyItem, ...context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', [])].slice(0, 50));
 
                 panel.webview.postMessage({
                     command: "updateHistoryAnswer",
@@ -190,8 +203,11 @@ function createChatPanel(context: vscode.ExtensionContext, initialQuestion?: str
                     });
                 }
             }
+        } else if (message.command === 'getWorkspaceFiles') {
+            const files = await vscode.workspace.findFiles('**/*', '**/node_modules/**');
+            const filePaths = files.map(file => file.fsPath);
+            panel.webview.postMessage({ command: 'workspaceFiles', files: filePaths });
         } else if (message.command === "deleteHistoryItem") {
-            // Handle deleting individual history item
             const currentHistory = context.globalState.get<ChatHistoryItem[]>('ollamaChatHistory', []);
             const updatedHistory = currentHistory.filter(item =>
                 !(item.question === message.question && item.timestamp === message.timestamp)
@@ -219,12 +235,10 @@ export function activate(context: vscode.ExtensionContext) {
         executableIsAvailable("ollama");
     }
 
-    // Register the original chat command
     const chatCommand = vscode.commands.registerCommand('ollama-chat.ollamaChat', async () => {
         createChatPanel(context, undefined, vscode.ViewColumn.One);
     });
 
-    // Register the new command for selected text
     const askSelectedCommand = vscode.commands.registerCommand('ollama-chat.askSelected', async () => {
         const editor = vscode.window.activeTextEditor;
         if (!editor) {

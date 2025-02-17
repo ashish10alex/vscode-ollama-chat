@@ -12,10 +12,14 @@ const historyCount = document.getElementById('historyCount');
 const historySearch = document.getElementById('historySearch');
 const sendIcon = document.getElementById('sendIcon');
 const stopIcon = document.getElementById('stopIcon');
+const addFileBtn = document.getElementById('addFileBtn');
+const fileDropdown = document.getElementById('fileDropdown');
 
 let currentAssistantMessage = null;
 let autoScrollEnabled = true;  // flag to control auto-scroll
 let isGenerating = false;
+let selectedFiles = [];
+const originalAddFileBtnHTML = addFileBtn.innerHTML; // store original button content
 
 function scrollToBottom() {
     chatContainer.scrollTop = chatContainer.scrollHeight;
@@ -245,86 +249,20 @@ function toggleGeneratingState(generating) {
     }
 }
 
-async function sendMessage() {
-
-    if (isGenerating) {
-        vscode.postMessage({ command: 'stopResponse' });
-        toggleGeneratingState(false);
-        return;
-    }
-
-    const question = questionInput.value.trim();
-    if (!question) {
-        return;
-    }
-
-    // Add to history UI only (storage will happen after we get the response)
-    addToHistory(question, new Date().toLocaleTimeString(), '', true);
-
-    toggleGeneratingState(true);
-    refreshBtn.disabled = true;
-    
-    addMessage(question, true);
-    questionInput.value = '';
-    questionInput.style.height = 'auto';
-    
-    startNewAssistantAnswer();
-    showLoading();
-
-    vscode.postMessage({
-        command: "chat",
-        question
-    });
-}
-
-// Event listeners
-submitBtn.addEventListener('click', sendMessage);
-
-questionInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-        e.preventDefault();
-        sendMessage();
-    } else if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-        e.preventDefault(); 
-        clearChat();
+// Handle add file button click
+addFileBtn.addEventListener('click', () => {
+    // Toggle dropdown visibility
+    if (!fileDropdown.classList.contains('hidden')) {
+        fileDropdown.classList.add('hidden');
+    } else {
+        // Request the list of workspace files from the extension
+        vscode.postMessage({ command: 'getWorkspaceFiles' });
     }
 });
 
-modelSelector.addEventListener('change', function(e) {
-    const selectedModel = e.target.value;
-    vscode.postMessage({ command: "selectedModel", selectedModel });
-});
-
-function clearChat() {
-    const chatContainer = document.getElementById('chatContainer');
-    
-    // Preserve these elements (header/model selector)
-    const preservedElements = Array.from(chatContainer.children).filter(child => {
-        return child.classList.contains('text-center') || // Header container
-               child.classList.contains('loading-indicator'); // Any loading indicators
-    });
-
-    // Remove all children except preserved elements
-    while (chatContainer.firstChild) {
-        chatContainer.removeChild(chatContainer.firstChild);
-    }
-
-    // Add back preserved elements
-    preservedElements.forEach(element => {
-        chatContainer.appendChild(element);
-    });
-
-    currentAssistantMessage = null;
-    questionInput.focus();
-
-    // Notify extension to clear conversation
-    vscode.postMessage({ command: "newChat" });
-}
-
-refreshBtn.addEventListener('click', clearChat);
-
+// Listen for incoming messages to render the file dropdown
 window.addEventListener('message', event => {
-    const { command, text, availableModels, selectedModel, messageStreamEnded, history, question } = event.data;
+    const { command, text, availableModels, selectedModel, messageStreamEnded, history, question, files } = event.data;
     
     if (command === "loadHistory" && history) {
         historyList.innerHTML = '';
@@ -373,6 +311,8 @@ window.addEventListener('message', event => {
         questionInput.value = question;
         questionInput.style.height = 'auto';
         questionInput.style.height = questionInput.scrollHeight + 'px';
+    } else if (command === "workspaceFiles" && files) {
+        renderFileDropdown(files);
     }
     if (availableModels && selectedModel) {
         populateModelSelector(availableModels, selectedModel);
@@ -395,3 +335,220 @@ function clearHistory() {
     historySearch.value = '';
     vscode.postMessage({ command: "clearHistory" });
 }
+
+// Function to render the dropdown with multiselect file options
+function renderFileDropdown(files) {
+    // Clear previous content
+    fileDropdown.innerHTML = `
+        <!-- Search bar -->
+        <div class="p-2 border-b border-[#404040] bg-[#333333]">
+            <input 
+                type="text" 
+                id="fileSearch" 
+                class="w-full px-3 py-1.5 bg-[#1e1e1e] text-[#cccccc] rounded border border-[#404040] text-sm focus:outline-none focus:border-[#0e639c] focus:ring-1 focus:ring-[#0e639c]" 
+                placeholder="Search files..."
+            />
+        </div>
+        <div id="fileList" class="file-list"></div>
+        <div class="p-2 border-t border-[#404040] bg-[#333333] flex justify-between items-center">
+            <span id="fileCount" class="text-xs text-[#858585]">${files.length} files</span>
+            <button id="confirmFileSelection" class="px-3 py-1 bg-[#0066AD] text-white rounded hover:bg-[#0077CC] text-sm">
+                Confirm
+            </button>
+        </div>
+    `;
+
+    const fileList = fileDropdown.querySelector('#fileList');
+    const confirmBtn = fileDropdown.querySelector('#confirmFileSelection');
+    const fileSearch = fileDropdown.querySelector('#fileSearch');
+    
+    let visibleFiles = [...files];
+
+    function updateSelectedCount() {
+        const selectedCount = fileList.querySelectorAll('input[type="checkbox"]:checked').length;
+        if (selectedCount > 0) {
+            fileDropdown.querySelector('#fileCount').textContent = `${selectedCount} selected`;
+        } else {
+            fileDropdown.querySelector('#fileCount').textContent = `${files.length} files`;
+        }
+    }
+
+    function renderFiles(filesToRender) {
+        fileList.innerHTML = '';
+        if (filesToRender.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'p-4 text-sm text-[#858585] text-center';
+            noResults.textContent = 'No matching files found';
+            fileList.appendChild(noResults);
+            return;
+        }
+
+        filesToRender.forEach(filePath => {
+            const fileItemDiv = document.createElement('div');
+            fileItemDiv.className = 'p-2 hover:bg-[#3c3c3c] cursor-pointer flex items-center gap-2';
+            
+            const checkbox = document.createElement('input');
+            checkbox.type = 'checkbox';
+            checkbox.value = filePath;
+            checkbox.className = 'rounded border-[#404040]';
+            
+            const fileName = filePath.split(/[\\/]/).pop(); // Get just the file name
+            const filePathWithoutName = filePath.substring(0, filePath.length - fileName.length);
+            
+            const labelDiv = document.createElement('div');
+            labelDiv.className = 'flex flex-col flex-1 min-w-0';
+            labelDiv.innerHTML = `
+                <span class="text-sm text-[#cccccc] truncate">${fileName}</span>
+                <span class="text-xs text-[#858585] truncate">${filePathWithoutName}</span>
+            `;
+            
+            fileItemDiv.appendChild(checkbox);
+            fileItemDiv.appendChild(labelDiv);
+            fileList.appendChild(fileItemDiv);
+
+            checkbox.addEventListener('change', updateSelectedCount);
+
+            // Make the entire div clickable
+            fileItemDiv.addEventListener('click', (e) => {
+                if (e.target !== checkbox) {
+                    checkbox.checked = !checkbox.checked;
+                    updateSelectedCount();
+                }
+            });
+        });
+        updateSelectedCount();
+    }
+
+    // Initial render
+    renderFiles(visibleFiles);
+
+    // Search functionality
+    fileSearch.addEventListener('input', (e) => {
+        const searchTerm = e.target.value.toLowerCase();
+        visibleFiles = files.filter(file => 
+            file.toLowerCase().includes(searchTerm)
+        );
+        renderFiles(visibleFiles);
+    });
+
+    // Confirm button functionality
+    confirmBtn.addEventListener('click', () => {
+        const checkboxes = fileList.querySelectorAll('input[type="checkbox"]');
+        selectedFiles = Array.from(checkboxes)
+            .filter(cb => cb.checked)
+            .map(cb => cb.value);
+
+        // Update button text with selected count
+        if (selectedFiles.length > 0) {
+            addFileBtn.innerHTML = `
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 inline" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4" />
+                </svg>
+                <span class="hidden sm:inline">Files (${selectedFiles.length})</span>
+            `;
+        } else {
+            addFileBtn.innerHTML = originalAddFileBtnHTML;
+        }
+        
+        fileDropdown.classList.add('hidden');
+    });
+
+    // Show the dropdown
+    fileDropdown.classList.remove('hidden');
+
+    // Focus search input
+    fileSearch.focus();
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', function closeDropdown(e) {
+        if (!fileDropdown.contains(e.target) && e.target !== addFileBtn) {
+            fileDropdown.classList.add('hidden');
+            document.removeEventListener('click', closeDropdown);
+        }
+    });
+}
+
+// Update sendMessage to include selected files in the chat message
+async function sendMessage() {
+
+    if (isGenerating) {
+        vscode.postMessage({ command: 'stopResponse' });
+        toggleGeneratingState(false);
+        return;
+    }
+
+    const question = questionInput.value.trim();
+    if (!question) {
+        return;
+    }
+
+    // Add to history UI only (storage will happen after we get the response)
+    addToHistory(question, new Date().toLocaleTimeString(), '', true);
+
+    toggleGeneratingState(true);
+    refreshBtn.disabled = true;
+    
+    addMessage(question, true);
+    questionInput.value = '';
+    questionInput.style.height = 'auto';
+    
+    startNewAssistantAnswer();
+    showLoading();
+
+    // Include selectedFiles with the chat message payload
+    vscode.postMessage({
+        command: "chat",
+        question,
+        files: selectedFiles
+    });
+
+    // Reset the selected files and addFileBtn UI
+    selectedFiles = [];
+    addFileBtn.innerHTML = originalAddFileBtnHTML;
+}
+
+// Event listeners
+submitBtn.addEventListener('click', sendMessage);
+
+questionInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        sendMessage();
+    } else if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault(); 
+        clearChat();
+    }
+});
+
+modelSelector.addEventListener('change', function(e) {
+    const selectedModel = e.target.value;
+    vscode.postMessage({ command: "selectedModel", selectedModel });
+});
+
+function clearChat() {
+    const chatContainer = document.getElementById('chatContainer');
+    
+    // Preserve these elements (header/model selector)
+    const preservedElements = Array.from(chatContainer.children).filter(child => {
+        return child.classList.contains('text-center') || // Header container
+               child.classList.contains('loading-indicator'); // Any loading indicators
+    });
+
+    // Remove all children except preserved elements
+    while (chatContainer.firstChild) {
+        chatContainer.removeChild(chatContainer.firstChild);
+    }
+
+    // Add back preserved elements
+    preservedElements.forEach(element => {
+        chatContainer.appendChild(element);
+    });
+
+    currentAssistantMessage = null;
+    questionInput.focus();
+
+    // Notify extension to clear conversation
+    vscode.postMessage({ command: "newChat" });
+}
+
+refreshBtn.addEventListener('click', clearChat);
