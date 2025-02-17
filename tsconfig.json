@@ -7,8 +7,9 @@
 			"ES2022",
 			"DOM"
 		],
+		"jsx": "react",
 		"sourceMap": true,
-		"rootDir": "src",
+		"rootDir": ".",
 		"strict": true,   /* enable all strict type-checking options */
 		/* Additional Checks */
 		// "noImplicitReturns": true, /* Report error when not all code paths in function return a value. */
@@ -17,10 +18,12 @@
 	},
 	"include": [
 		"src",
+		"webview/**/*",
 		"src/globals.d.ts"
 	],
 	"exclude": [
 		"node_modules",
-		".vscode-test"
-	]
+		".vscode-test",
+		"dist"
+	],
 }

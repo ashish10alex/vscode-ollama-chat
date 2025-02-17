@@ -61,7 +61,7 @@ function createChatPanel(context: vscode.ExtensionContext, initialQuestion?: str
             enableScripts: true,
             retainContextWhenHidden: true,
             localResourceRoots: [
-                vscode.Uri.joinPath(context.extensionUri, "media", "js")
+                vscode.Uri.joinPath(context.extensionUri, "dist")
             ],
         },
     );
